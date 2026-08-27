@@ -1773,19 +1773,26 @@ body.has-consent-bar .wp-site-blocks {
 /* --- bare footer ------------------------------------------------------ */
 
 .brt-bare-footer__inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem 2rem;
+  display: grid;
+  gap: 1.35rem;
 }
+
+/* Contact first, then the legal row — the landing page keeps no navigation,
+   so these are the only outbound links and they read as ways to reach him
+   rather than places to wander off to. */
+.brt-bare-footer__reach { margin: 0; }
+
+.brt-bare-footer__reach .brt-footer__contact { gap: .5rem; }
 
 .brt-bare-footer__links {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: .35rem 1.5rem;
   margin: 0;
   font-size: .9375rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgba(255,255,255,.12);
 }
 
 .brt-bare-footer__links a {

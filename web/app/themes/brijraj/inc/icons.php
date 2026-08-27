@@ -35,6 +35,7 @@ function brijraj_icon(string $name, int $size = 18, string $class = ''): string
         'linkedin' => '<path d="M4.98 3.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM.9 7.24h4.13V21H.9V7.24Zm6.7 0h3.96v1.88h.06c.55-1 1.9-2.06 3.9-2.06 4.17 0 4.94 2.6 4.94 6v7.94h-4.12v-7.04c0-1.68-.03-3.84-2.4-3.84-2.4 0-2.77 1.83-2.77 3.72V21H7.6V7.24Z" fill="currentColor"/>',
         'mail'     => '<path d="M3 5.5h18a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" fill="none"/><path d="m3 7 9 6 9-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
         'whatsapp' => '<path d="M12 2.5a9.4 9.4 0 0 0-8.1 14.1L2.6 21.5l5-1.3A9.4 9.4 0 1 0 12 2.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" fill="none"/><path d="M8.9 8c.2-.5.4-.5.6-.5h.5c.2 0 .4 0 .6.5l.7 1.6c.1.3 0 .5-.1.7l-.4.5c-.1.2-.3.3-.1.6a7 7 0 0 0 3 2.6c.3.1.5.1.7-.1l.6-.7c.2-.2.4-.2.6-.1l1.6.8c.3.1.4.3.4.5a2 2 0 0 1-1.3 1.7c-.5.2-1.2.3-3.5-.7a10 10 0 0 1-4.2-4.3c-.8-1.6-.6-2.5-.4-3Z" fill="currentColor"/>',
+        'instagram'=> '<rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7" fill="none"/><circle cx="12" cy="12" r="4.1" stroke="currentColor" stroke-width="1.7" fill="none"/><circle cx="17.2" cy="6.8" r="1.15" fill="currentColor"/>',
 
         // Input sources — generic glyphs, identified by their labels
         'ticket'   => '<rect x="3" y="4.5" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="M8 9.5h8M8 13.5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
@@ -52,8 +53,13 @@ function brijraj_icon(string $name, int $size = 18, string $class = ''): string
         return '';
     }
 
+    // Every placeholder is numbered. The original mixed `%s` with `%1$d`, and
+    // PHP counts those two styles separately: the first `%s` consumed $size
+    // (producing class="brt-ico17"), and the second consumed the class string,
+    // so the path data — argument three — was never printed at all. Every icon
+    // on the site rendered as an empty <svg>.
     return sprintf(
-        '<svg class="brt-ico%s" width="%1$d" height="%1$d" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">%s</svg>',
+        '<svg class="brt-ico%2$s" width="%1$d" height="%1$d" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">%3$s</svg>',
         $size,
         $class !== '' ? ' ' . esc_attr($class) : '',
         $paths[$name]
@@ -61,24 +67,78 @@ function brijraj_icon(string $name, int $size = 18, string $class = ''): string
 }
 
 /**
- * [brt_contact_pills] — LinkedIn / email / WhatsApp with icons.
+ * Every way to reach him, defined once.
  *
- * One definition used on every page, so the contact row can never drift out of
- * sync between About, the challenge page and the footer.
+ * This list previously existed twice — as an array here and as hand-written
+ * SVG markup in the footer template — which is why Instagram was missing in
+ * one place and the icons were missing in another. One source, three
+ * renderings; adding a channel is now a single edit.
  *
- * @param array $atts style: pills|cards
+ * @return list<array{icon:string,label:string,short:string,sub:string,href:string,cta:string,ext:bool}>
+ */
+function brijraj_contact_links(): array
+{
+    return (array) apply_filters('brijraj_contact_links', [
+        [
+            'icon'  => 'linkedin',
+            'label' => 'LinkedIn',
+            'short' => 'LinkedIn',
+            'sub'   => 'Connect on LinkedIn',
+            'href'  => 'https://www.linkedin.com/in/brijrajsinngh/',
+            'cta'   => 'linkedin',
+            'ext'   => true,
+        ],
+        [
+            'icon'  => 'mail',
+            'label' => 'brij@brijraj.tech',
+            'short' => 'brij@brijraj.tech',
+            'sub'   => 'Email directly',
+            'href'  => 'mailto:brij@brijraj.tech',
+            'cta'   => 'email',
+            'ext'   => false,
+        ],
+        [
+            'icon'  => 'whatsapp',
+            'label' => 'WhatsApp',
+            'short' => 'WhatsApp',
+            'sub'   => 'Quick conversation',
+            'href'  => 'https://wa.me/917055565098',
+            'cta'   => 'whatsapp',
+            'ext'   => true,
+        ],
+        [
+            'icon'  => 'instagram',
+            'label' => 'Instagram',
+            'short' => 'Instagram',
+            'sub'   => '@brijraj.tech',
+            'href'  => 'https://instagram.com/brijraj.tech',
+            'cta'   => 'instagram',
+            'ext'   => true,
+        ],
+    ]);
+}
+
+/**
+ * [brt_contact_pills] — the contact row, with icons, everywhere it appears.
+ *
+ * @param array $atts style: pills|cards|footer
  */
 add_shortcode('brt_contact_pills', static function ($atts): string {
-    $atts = shortcode_atts(['style' => 'pills'], is_array($atts) ? $atts : [], 'brt_contact_pills');
+    $atts  = shortcode_atts(['style' => 'pills'], is_array($atts) ? $atts : [], 'brt_contact_pills');
     $cards = $atts['style'] === 'cards';
+    $foot  = $atts['style'] === 'footer';
 
-    $items = [
-        ['icon' => 'linkedin', 'label' => 'LinkedIn',          'sub' => 'Connect on LinkedIn',       'href' => 'https://www.linkedin.com/in/brijrajsinngh/', 'cta' => 'linkedin', 'ext' => true],
-        ['icon' => 'mail',     'label' => 'brij@brijraj.tech',  'sub' => 'Email directly',            'href' => 'mailto:brij@brijraj.tech',                   'cta' => 'email',    'ext' => false],
-        ['icon' => 'whatsapp', 'label' => 'WhatsApp',           'sub' => 'Quick conversation',        'href' => 'https://wa.me/917055565098',                 'cta' => 'whatsapp', 'ext' => true],
-    ];
+    $items = brijraj_contact_links();
 
-    $out = '<div class="' . ($cards ? 'brt-contactcards' : 'brt-contact') . '">';
+    $class = 'brt-contact';
+
+    if ($cards) {
+        $class = 'brt-contactcards';
+    } elseif ($foot) {
+        $class = 'brt-footer__contact';
+    }
+
+    $out = '<div class="' . esc_attr($class) . '">';
 
     foreach ($items as $i) {
         $rel = $i['ext'] ? ' target="_blank" rel="noopener noreferrer"' : '';
@@ -101,8 +161,8 @@ add_shortcode('brt_contact_pills', static function ($atts): string {
             esc_url($i['href']),
             esc_attr($i['cta']),
             $rel,
-            brijraj_icon($i['icon'], 17),
-            esc_html($i['label'])
+            brijraj_icon($i['icon'], $foot ? 16 : 17),
+            esc_html($foot ? $i['short'] : $i['label'])
         );
     }
 
