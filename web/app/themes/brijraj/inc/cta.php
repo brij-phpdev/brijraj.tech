@@ -53,7 +53,7 @@ function brijraj_cta_registry(): array
             'label'        => 'Lead magnet — Free PM AI Starter Kit',
             'help'         => 'Usually an internal page such as /starter-kit/.',
             'default_text' => 'Get the Free PM AI Starter Kit',
-            'fallback'     => '/ai-project-delivery-starter-kit/',
+            'fallback'     => '/resources/starter-kit/',
         ],
         'downsell' => [
             'label'        => 'Downsell',
@@ -65,13 +65,19 @@ function brijraj_cta_registry(): array
             'label'        => 'Share Your Challenge form',
             'help'         => 'Internal page for the challenge/enquiry form.',
             'default_text' => 'Share Your Challenge',
-            'fallback'     => '/share-your-challenge/',
+            'fallback'     => '/resources/share-your-challenge/',
+        ],
+        'audit' => [
+            'label'        => 'The Delivery Reporting Audit (current focus)',
+            'help'         => 'The offer page. Normally /audit/.',
+            'default_text' => 'Delivery Audit',
+            'fallback'     => '/audit/',
         ],
         'product' => [
             'label'        => 'Product detail page (internal)',
             'help'         => 'The on-site page describing the workflow system.',
             'default_text' => 'See the Workflow System',
-            'fallback'     => '/ai-workflow-system/',
+            'fallback'     => '/resources/ai-workflow-system/',
         ],
     ];
 }
@@ -414,7 +420,7 @@ add_action('wp_footer', static function (): void {
     // The audit page's CTAs are in-page anchors rather than registry entries,
     // and all of them mean the same thing: someone moved toward the form. One
     // event, distinguished by location, keeps them out of the generic bucket.
-    if (id.indexOf('audit_') === 0) {
+    if (id.indexOf('audit_') === 0 || id === 'nav_audit') {
       window.gtag('event', 'audit_cta_click', {
         cta_location: loc,
         page_path: path()
@@ -541,13 +547,13 @@ add_action('wp_footer', static function (): void {
  * configured, so the header never carries a dead control.
  */
 add_shortcode('brt_navcta', static function (): string {
-    if (! brijraj_cta_is_live('core')) {
+    if (! brijraj_cta_is_live('audit')) {
         return '';
     }
 
     return sprintf(
-        '<a class="brt-navcta" href="%s" data-cta="nav_core" data-cta-location="nav" target="_blank" rel="noopener noreferrer">%s</a>',
-        esc_url(brijraj_cta_url('core')),
-        esc_html__('Get Instant Access', 'brijraj')
+        '<a class="brt-navcta" href="%s" data-cta="nav_audit" data-cta-location="nav">%s</a>',
+        esc_url(brijraj_cta_url('audit')),
+        esc_html__('Delivery Audit', 'brijraj')
     );
 });

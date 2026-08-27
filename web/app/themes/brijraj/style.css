@@ -2095,3 +2095,227 @@ body.has-consent-bar .wp-site-blocks {
 @media (min-width: 601px) {
   .brt-audit__form .brt-form__submit { width: auto; }
 }
+
+/* =========================================================================
+   CLIENT REVIEWS  —  the shared proof component
+   =========================================================================
+   Two layouts from one dataset. `strip` is a dense row for the homepage,
+   where the job is to establish within the first screen that named people
+   vouch for him. `grid` gives each review a card and room for a quote, for
+   pages where the reader has already committed.
+   ====================================================================== */
+
+.brt-proof__h {
+  font-size: clamp(1.2rem, 2.2vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--brt-navy);
+  margin: 0 0 1.15rem;
+}
+
+.brt-proof__list {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.brt-proof__meta { margin: 0; display: flex; flex-direction: column; gap: .1rem; }
+.brt-proof__name { font-weight: 700; color: var(--brt-navy); font-size: .9375rem; }
+.brt-proof__role { font-size: .875rem; color: var(--brt-slate); }
+
+.brt-proof__rating {
+  font-size: .8125rem;
+  color: var(--brt-steel);
+  font-weight: 600;
+  margin-top: .2rem;
+}
+
+.brt-proof__quote {
+  margin: 0 0 .75rem;
+  color: var(--brt-charcoal);
+  font-size: .9688rem;
+  line-height: 1.6;
+}
+
+.brt-proof__note {
+  font-size: .9375rem;
+  color: var(--brt-slate);
+  margin: 1rem 0 0;
+}
+
+/* --- grid: one card per review ---------------------------------------- */
+
+.brt-proof--grid .brt-proof__item {
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius-sm);
+  padding: 1.1rem 1.25rem;
+  background: #fff;
+}
+
+@media (min-width: 620px) {
+  .brt-proof--grid .brt-proof__list { grid-template-columns: 1fr 1fr; }
+}
+
+/* --- strip: a single dense row ---------------------------------------- */
+
+.brt-proof--strip .brt-proof__list {
+  gap: .5rem 2.25rem;
+  grid-auto-flow: row;
+}
+
+@media (min-width: 700px) {
+  .brt-proof--strip .brt-proof__list { grid-template-columns: repeat(4, 1fr); }
+}
+
+.brt-proof--strip .brt-proof__item {
+  padding-left: .9rem;
+  border-left: 2px solid var(--brt-accent);
+}
+
+.brt-proof--strip .brt-proof__quote { display: none; }
+.brt-proof--strip .brt-proof__note { margin-top: 1.25rem; }
+
+/* =========================================================================
+   HOMEPAGE  —  bridge positioning, proof, current focus
+   ====================================================================== */
+
+.brt-bridge {
+  max-width: 62ch;
+}
+
+.brt-bridge__h1 {
+  font-size: clamp(1.9rem, 4.6vw, 2.9rem) !important;
+  font-weight: 800;
+  letter-spacing: -.032em;
+  line-height: 1.1;
+  color: var(--brt-navy);
+  margin: 0 0 1.15rem;
+  text-wrap: balance;
+}
+
+.brt-bridge__p {
+  font-size: clamp(1.0625rem, 1.5vw, 1.15rem);
+  line-height: 1.62;
+  color: var(--brt-slate);
+  margin: 0 0 1rem;
+}
+
+.brt-bridge__p--turn {
+  color: var(--brt-navy);
+  font-weight: 600;
+}
+
+/* --- the current-focus card -------------------------------------------
+   Deliberately a card rather than a section: it is the one part of the
+   homepage designed to be swapped when the focus changes, and looking
+   removable is honest about that. */
+
+.brt-focus {
+  border: 1px solid var(--brt-border);
+  border-left: 3px solid var(--brt-accent);
+  border-radius: 0 var(--brt-radius) var(--brt-radius) 0;
+  background: #fff;
+  padding: clamp(1.4rem, 3.5vw, 2rem);
+  max-width: 720px;
+}
+
+.brt-focus__k {
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--brt-accent);
+  margin: 0 0 .6rem;
+}
+
+.brt-focus__h {
+  font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--brt-navy);
+  margin: 0 0 .7rem;
+  text-wrap: balance;
+}
+
+.brt-focus p {
+  color: var(--brt-slate);
+  line-height: 1.6;
+  margin: 0 0 .8rem;
+  max-width: 60ch;
+}
+
+.brt-focus__cta { margin-top: .5rem; }
+
+/* --- broader services teaser ------------------------------------------ */
+
+.brt-more { max-width: 62ch; }
+
+.brt-more h2 {
+  font-size: clamp(1.2rem, 2.2vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--brt-navy);
+  margin: 0 0 .7rem;
+}
+
+.brt-more p { color: var(--brt-slate); line-height: 1.62; margin: 0 0 .85rem; }
+
+/* --- contact block ----------------------------------------------------- */
+
+.brt-reach { max-width: 62ch; }
+
+.brt-reach h2 {
+  font-size: clamp(1.2rem, 2.2vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--brt-navy);
+  margin: 0 0 .7rem;
+}
+
+.brt-reach p { color: var(--brt-slate); margin: 0 0 .85rem; }
+
+/* =========================================================================
+   RESOURCES INDEX
+   ====================================================================== */
+
+.brt-res {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 720px) {
+  .brt-res { grid-template-columns: repeat(3, 1fr); }
+}
+
+.brt-res__item {
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius-sm);
+  padding: 1.25rem 1.35rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.brt-res__item h2 {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -.014em;
+  color: var(--brt-navy);
+  margin: 0;
+}
+
+.brt-res__item p {
+  margin: 0;
+  color: var(--brt-slate);
+  font-size: .9375rem;
+  line-height: 1.55;
+  flex: 1;
+}
+
+.brt-res__item a { font-weight: 600; font-size: .9375rem; }

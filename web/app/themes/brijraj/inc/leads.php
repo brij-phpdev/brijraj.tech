@@ -611,24 +611,12 @@ add_action('wp_footer', static function (): void {
  * Legacy URL consolidation
  * ---------------------------------------------------------------------- */
 
-/**
- * The earlier /starter-kit/ page was superseded by the dedicated landing page.
- * Two pages targeting the same intent split their own ranking, so the old URL
- * 301s rather than being deleted outright — any link already pointing at it
- * keeps working and passes its signals on.
+/*
+ * The /starter-kit/ redirect that used to live here has moved to
+ * inc/redirects.php, which now owns every moved URL on the site. Leaving it
+ * here would have produced a two-hop chain: /starter-kit/ to the old landing
+ * page, and only then to its home under /resources/.
  */
-add_action('template_redirect', static function (): void {
-    if (is_admin()) {
-        return;
-    }
-
-    $path = trim((string) wp_parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH), '/');
-
-    if ($path === 'starter-kit') {
-        wp_safe_redirect(home_url('/ai-project-delivery-starter-kit/'), 301);
-        exit;
-    }
-}, 1);
 
 /**
  * Append the capture panel to the foot of every blog article.

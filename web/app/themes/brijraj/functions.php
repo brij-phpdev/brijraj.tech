@@ -47,6 +47,16 @@ require_once __DIR__ . '/inc/hero-media.php';
 require_once __DIR__ . '/inc/leads.php';
 
 /**
+ * Client reviews — the shared proof component used on home, about and audit.
+ */
+require_once __DIR__ . '/inc/proof.php';
+
+/**
+ * Permanent redirects for URLs that have moved.
+ */
+require_once __DIR__ . '/inc/redirects.php';
+
+/**
  * The Delivery Reporting Audit — offer page, qualifying form, lead store.
  */
 require_once __DIR__ . '/inc/audit.php';

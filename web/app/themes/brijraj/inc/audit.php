@@ -96,65 +96,6 @@ function brijraj_audit_faqs(): array
     ];
 }
 
-/**
- * Client reviews shown as proof.
- *
- * Facts only — name, role, rating and date, exactly as they appear on the
- * LinkedIn services page, which is linked so a visitor can verify them
- * independently. Review *text* is deliberately absent rather than paraphrased:
- * putting words in a named person's mouth is the one mistake here that cannot
- * be walked back.
- *
- * To add the real quotes later, filter `brijraj_audit_reviews` and set `quote`
- * on each entry — the renderer picks it up with no further changes.
- *
- * @return list<array{name:string,role:string,rating:string,date:string,quote:string}>
- */
-function brijraj_audit_reviews(): array
-{
-    return (array) apply_filters('brijraj_audit_reviews', [
-        [
-            'name'   => 'Akanksha Dhyani',
-            'role'   => 'Product Manager',
-            'rating' => '5/5',
-            'date'   => 'June 2023',
-            'quote'  => '',
-        ],
-        [
-            'name'   => 'Vivek Sharma',
-            'role'   => 'Technical Architect',
-            'rating' => '4.8/5',
-            'date'   => 'May 2023',
-            'quote'  => '',
-        ],
-        [
-            'name'   => 'Aditya Verma',
-            'role'   => 'Technical Lead',
-            'rating' => '5/5',
-            'date'   => 'May 2023',
-            'quote'  => '',
-        ],
-        [
-            'name'   => 'Akhilesh Singh',
-            'role'   => 'Digital Marketing Manager',
-            'rating' => '5/5',
-            'date'   => 'May 2023',
-            'quote'  => '',
-        ],
-    ]);
-}
-
-/**
- * Public LinkedIn services page, so the reviews above are verifiable.
- */
-function brijraj_audit_reviews_url(): string
-{
-    return (string) apply_filters(
-        'brijraj_audit_reviews_url',
-        'https://www.linkedin.com/in/brijrajsinngh/'
-    );
-}
-
 /* -------------------------------------------------------------------------
  * Form definition
  * ---------------------------------------------------------------------- */
@@ -718,32 +659,13 @@ function brijraj_audit_page(): string
     <p>I still do that day to day inside a services organisation, which is why what I install is in current use rather than theoretical. I take a small number of these engagements alongside it, deliberately — I'd rather do a few well than many at volume.</p>
   </section>
 
-  <?php /* 09 — proof. */ ?>
-  <?php $reviews = brijraj_audit_reviews(); ?>
-  <?php if ($reviews !== []) : ?>
+  <?php /* 09 — proof. Shared component: same reviews on home and about. */ ?>
   <section class="brt-audit__section">
-    <h2>What people who've worked with me say</h2>
-    <ul class="brt-audit__reviews">
-      <?php foreach ($reviews as $r) : ?>
-        <li class="brt-audit__review">
-          <?php if (! empty($r['quote'])) : ?>
-            <p class="brt-audit__review-q"><?php echo esc_html($r['quote']); ?></p>
-          <?php endif; ?>
-          <p class="brt-audit__review-m">
-            <span class="brt-audit__review-n"><?php echo esc_html($r['name']); ?></span>
-            <span class="brt-audit__review-r"><?php echo esc_html($r['role']); ?></span>
-            <span class="brt-audit__review-s"><?php echo esc_html($r['rating']); ?> &middot; <?php echo esc_html($r['date']); ?></span>
-          </p>
-        </li>
-      <?php endforeach; ?>
-    </ul>
-    <p class="brt-audit__aside">
-      Client reviews from my
-      <a href="<?php echo esc_url(brijraj_audit_reviews_url()); ?>" target="_blank" rel="noopener noreferrer">LinkedIn services page</a>,
-      where they can be read in full.
-    </p>
+    <?php echo brijraj_reviews_html([
+        'layout'  => 'grid',
+        'heading' => "What people who've worked with me say",
+    ]); ?>
   </section>
-  <?php endif; ?>
 
   <?php /* 10 — FAQ. Same array feeds the schema, so the two cannot drift. */ ?>
   <section class="brt-audit__section">

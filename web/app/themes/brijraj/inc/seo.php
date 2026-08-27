@@ -78,7 +78,18 @@ function brijraj_meta_description(): string
     $fallback = (string) get_bloginfo('description');
 
     if (is_front_page()) {
-        return 'Turn repetitive project work into five ready-to-run AI workflows — status reports, meeting actions, executive updates, incident comms and risk intelligence. Built for implementation, not coursework.';
+        return 'Seventeen years between the business and engineering sides of software delivery. I build systems that take repetitive coordination work off delivery teams.';
+    }
+
+    // The posts page is not `is_singular()`, so its own meta description would
+    // otherwise be skipped and the site tagline used instead.
+    if (is_home() && ! is_front_page()) {
+        $blog_id = (int) get_option('page_for_posts');
+        $custom  = $blog_id > 0 ? (string) get_post_meta($blog_id, '_brt_meta_description', true) : '';
+
+        if ($custom !== '') {
+            return $custom;
+        }
     }
 
     if (is_singular()) {
