@@ -1,0 +1,8 @@
+# Block execution of scripts in the uploads directory.
+# WordPress only ever serves static media from here.
+<FilesMatch "\.(?i:php|phar|phtml|phps|php[0-9]|cgi|pl|py|sh|shtml)$">
+    Require all denied
+</FilesMatch>
+
+# No directory listings
+Options -Indexes

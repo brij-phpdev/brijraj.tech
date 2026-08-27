@@ -1,0 +1,2097 @@
+/*
+Theme Name: BrijRaj.Tech
+Theme URI: https://brijraj.tech
+Description: Custom design system for BrijRaj.Tech — ready-to-run AI workflows for project delivery. Child theme of Twenty Twenty-Five, built on native block patterns with no page builder.
+Author: BrijRaj.Tech
+Template: twentytwentyfive
+Version: 1.0.0
+Requires at least: 6.7
+Requires PHP: 8.3
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: brijraj
+*/
+
+/* ==========================================================================
+   BrijRaj.Tech design system
+   Tokens live in theme.json. This file holds component styles only.
+   ========================================================================== */
+
+:root {
+  --brt-navy: #111D32;
+  --brt-navy-deep: #0A1422;
+  --brt-steel: #3E5875;
+  --brt-accent: #2F6FED;
+  --brt-accent-ink: #1B4FC4;
+  --brt-charcoal: #1B2430;
+  --brt-slate: #4F5D70;
+  --brt-border: #DCDAD0;
+  --brt-off-white: #F4F3EC;
+  --brt-radius: 14px;
+  --brt-radius-sm: 8px;
+  --brt-ease: cubic-bezier(.22,.61,.36,1);
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html { scroll-behavior: smooth; }
+
+/* --------------------------------------------------------------------------
+   CTA buttons — rendered by [brt_cta]; destinations configured in wp-admin
+   -------------------------------------------------------------------------- */
+.brt-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+}
+.brt-btns--center { justify-content: center; }
+
+.brt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .95rem 1.75rem;
+  border-radius: var(--brt-radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: background-color .2s var(--brt-ease), border-color .2s var(--brt-ease),
+              color .2s var(--brt-ease), transform .15s var(--brt-ease), box-shadow .2s var(--brt-ease);
+  /* Comfortable tap target on mobile (WCAG 2.5.8). */
+  min-height: 48px;
+}
+.brt-btn--sm { padding: .65rem 1.25rem; font-size: .9375rem; min-height: 44px; }
+
+.brt-btn--primary {
+  background: var(--brt-accent);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(47,111,237,.20), 0 10px 24px -14px rgba(47,111,237,.50);
+}
+.brt-btn--primary:hover,
+.brt-btn--primary:focus-visible {
+  background: var(--brt-navy);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px rgba(17,29,50,.2), 0 14px 30px -14px rgba(17,29,50,.6);
+}
+
+.brt-btn--secondary {
+  background: #fff;
+  color: var(--brt-navy);
+  border-color: var(--brt-border);
+}
+.brt-btn--secondary:hover,
+.brt-btn--secondary:focus-visible {
+  border-color: var(--brt-navy);
+  color: var(--brt-navy);
+  transform: translateY(-1px);
+}
+
+.brt-btn--link {
+  padding: .5rem 0;
+  min-height: 0;
+  background: none;
+  color: var(--brt-steel);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.brt-btn--link:hover { color: var(--brt-navy); }
+
+/* Visible focus ring for keyboard users on every variant. */
+.brt-btn:focus-visible {
+  outline: 3px solid rgba(47,111,237,.45);
+  outline-offset: 2px;
+}
+
+/* Editor-only marker for a CTA with no destination configured. */
+.brt-btn--unset {
+  background: #FFF4D6;
+  color: #7A5410;
+  border: 1.5px dashed #D9A441;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* On narrow screens CTAs go full width — no thumb gymnastics. */
+@media (max-width: 600px) {
+  .brt-btns { flex-direction: column; align-items: stretch; }
+  .brt-btn { width: 100%; }
+}
+
+/* --------------------------------------------------------------------------
+   Eyebrow / section label
+   -------------------------------------------------------------------------- */
+.brt-eyebrow {
+  display: inline-block;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--brt-steel);
+  margin-bottom: .75rem;
+}
+
+/* --------------------------------------------------------------------------
+   Lede — the sentence under an H1/H2
+   -------------------------------------------------------------------------- */
+.brt-lede {
+  font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
+  line-height: 1.6;
+  color: var(--brt-slate);
+  max-width: 46ch;
+}
+.brt-lede--center { margin-inline: auto; text-align: center; }
+
+/* --------------------------------------------------------------------------
+   Source chips — the messy reality (Jira, Excel, Slack…)
+   -------------------------------------------------------------------------- */
+.brt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
+  justify-content: center;
+}
+.brt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .55rem 1rem;
+  background: #fff;
+  border: 1px solid var(--brt-border);
+  border-radius: 999px;
+  font-size: .9375rem;
+  font-weight: 600;
+  color: var(--brt-charcoal);
+  box-shadow: 0 1px 2px rgba(17,29,50,.04);
+  white-space: nowrap;
+}
+.brt-chip::before {
+  content: "";
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--brt-slate);
+  opacity: .55;
+  flex: none;
+}
+
+/* The manual grind: Collect → Copy → Paste → … */
+.brt-grind {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem .25rem;
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .875rem;
+  color: var(--brt-slate);
+}
+.brt-grind span { padding: .3rem .55rem; border-radius: 6px; background: rgba(79,93,112,.08); }
+.brt-grind i { font-style: normal; opacity: .45; }
+
+/* --------------------------------------------------------------------------
+   Transformation flow — RAW → AI → HUMAN → OUTPUT
+   -------------------------------------------------------------------------- */
+.brt-flow {
+  display: grid;
+  gap: 0;
+  max-width: 620px;
+  margin-inline: auto;
+}
+.brt-flow__step {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  padding: 1.375rem 1.5rem;
+  box-shadow: 0 1px 2px rgba(17,29,50,.05);
+}
+.brt-flow__label {
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--brt-slate);
+  display: block;
+  margin-bottom: .3rem;
+}
+.brt-flow__title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--brt-navy);
+  line-height: 1.35;
+}
+.brt-flow__note { font-size: .9375rem; color: var(--brt-slate); margin-top: .35rem; line-height: 1.55; }
+
+/* Connector arrow between steps */
+.brt-flow__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  color: var(--brt-border);
+}
+.brt-flow__arrow svg { display: block; }
+
+/* Accent the two "who does what" steps */
+.brt-flow__step--ai    { border-color: rgba(62,88,117,.45); background: #FFFFFF; }
+.brt-flow__step--human { border-color: rgba(17,29,50,.30);  background: #FFFFFF; }
+.brt-flow__step--ai .brt-flow__label    { color: var(--brt-steel); }
+.brt-flow__step--human .brt-flow__label { color: var(--brt-steel); }
+.brt-flow__step--out   { border-color: rgba(17,29,50,.3); background: var(--brt-navy); }
+.brt-flow__step--out .brt-flow__title { color: #fff; }
+.brt-flow__step--out .brt-flow__label { color: rgba(255,255,255,.65); }
+.brt-flow__step--out .brt-flow__note  { color: rgba(255,255,255,.75); }
+
+/* --------------------------------------------------------------------------
+   Responsibility split — AI handles / Human handles
+   -------------------------------------------------------------------------- */
+.brt-split { display: grid; gap: 1.25rem; }
+@media (min-width: 782px) { .brt-split { grid-template-columns: 1fr 1fr; } }
+.brt-split__col {
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  padding: 1.75rem;
+  background: #fff;
+}
+.brt-split__col h3 { margin: 0 0 1rem; font-size: 1.0625rem; }
+.brt-split__col ul { margin: 0; padding: 0; list-style: none; display: grid; gap: .625rem; }
+.brt-split__col li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-size: .9375rem;
+  color: var(--brt-charcoal);
+  line-height: 1.5;
+}
+.brt-split__col li::before {
+  content: "";
+  position: absolute; left: 0; top: .45rem;
+  width: 8px; height: 8px; border-radius: 2px;
+}
+.brt-split__col--ai li::before    { background: var(--brt-steel); }
+.brt-split__col--human li::before { background: var(--brt-steel); }
+
+/* --------------------------------------------------------------------------
+   Workflow cards
+   -------------------------------------------------------------------------- */
+.brt-cards {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 700px)  { .brt-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .brt-cards--3 { grid-template-columns: repeat(3, 1fr); } }
+
+.brt-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  padding: 1.75rem;
+  transition: transform .25s var(--brt-ease), box-shadow .25s var(--brt-ease), border-color .25s var(--brt-ease);
+}
+@media (hover: hover) {
+  .brt-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(17,29,50,.22);
+    box-shadow: 0 2px 4px rgba(17,29,50,.06), 0 18px 40px -18px rgba(17,29,50,.3);
+  }
+}
+.brt-card__num {
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .8125rem;
+  font-weight: 600;
+  color: var(--brt-steel);
+  letter-spacing: .06em;
+  margin-bottom: .75rem;
+}
+.brt-card__title { font-size: 1.1875rem; font-weight: 700; color: var(--brt-navy); line-height: 1.3; margin: 0 0 .5rem; }
+.brt-card__sub   { font-size: .9375rem; color: var(--brt-slate); line-height: 1.55; margin: 0 0 1.25rem; }
+
+.brt-card__io { display: grid; gap: .5rem; margin-top: auto; }
+.brt-card__row {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: .75rem;
+  align-items: start;
+  font-size: .875rem;
+  line-height: 1.5;
+  padding-top: .625rem;
+  border-top: 1px dashed var(--brt-border);
+}
+.brt-card__key {
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--brt-slate);
+  padding-top: .15rem;
+}
+.brt-card__val { color: var(--brt-charcoal); }
+
+/* --------------------------------------------------------------------------
+   Comparison — course vs workflow system
+   -------------------------------------------------------------------------- */
+.brt-compare {
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  overflow: hidden;
+  background: #fff;
+}
+.brt-compare__head, .brt-compare__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.brt-compare__head > div {
+  padding: 1rem 1.25rem;
+  font-weight: 700;
+  font-size: .9375rem;
+  background: var(--brt-off-white);
+  border-bottom: 1px solid var(--brt-border);
+}
+.brt-compare__head > div:first-child { color: var(--brt-slate); }
+.brt-compare__head > div:last-child  { color: var(--brt-navy); background: #ECEBE2; }
+.brt-compare__row > div {
+  padding: .95rem 1.25rem;
+  font-size: .9375rem;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--brt-border);
+}
+.brt-compare__row > div:first-child { color: var(--brt-slate); }
+.brt-compare__row > div:last-child  { color: var(--brt-charcoal); font-weight: 600; background: #FAF9F3; }
+.brt-compare__row:last-child > div  { border-bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   Document mockup — product preview
+   -------------------------------------------------------------------------- */
+.brt-doc {
+  background: #fff;
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  box-shadow: 0 2px 4px rgba(17,29,50,.06), 0 24px 48px -24px rgba(17,29,50,.32);
+  overflow: hidden;
+}
+.brt-doc__bar {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .7rem .9rem;
+  background: var(--brt-off-white);
+  border-bottom: 1px solid var(--brt-border);
+}
+.brt-doc__dot { width: 9px; height: 9px; border-radius: 50%; background: #D3DCE6; flex: none; }
+.brt-doc__name {
+  margin-left: .5rem;
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .75rem;
+  color: var(--brt-slate);
+}
+.brt-doc__body { padding: 1.5rem; font-size: .9375rem; line-height: 1.6; }
+.brt-doc__body h4 { margin: 0 0 .75rem; font-size: 1rem; color: var(--brt-navy); }
+.brt-doc__body p  { margin: 0 0 .75rem; color: var(--brt-charcoal); }
+.brt-doc__meta {
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .75rem;
+  color: var(--brt-slate);
+  margin-bottom: 1rem;
+}
+.brt-doc--raw .brt-doc__body { font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace); font-size: .8125rem; color: var(--brt-slate); }
+
+.brt-beforeafter { display: grid; gap: 1.25rem; align-items: center; }
+@media (min-width: 860px) { .brt-beforeafter { grid-template-columns: 1fr auto 1fr; } }
+.brt-beforeafter__arrow { display: flex; align-items: center; justify-content: center; color: var(--brt-steel); }
+
+/* Small caption under an example */
+.brt-caption {
+  font-size: .8125rem;
+  color: var(--brt-slate);
+  text-align: center;
+  margin-top: .75rem;
+}
+
+/* --------------------------------------------------------------------------
+   Pricing
+   -------------------------------------------------------------------------- */
+.brt-price {
+  border: 1px solid var(--brt-border);
+  border-radius: 18px;
+  background: #fff;
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  box-shadow: 0 2px 4px rgba(17,29,50,.06), 0 24px 56px -28px rgba(17,29,50,.3);
+  max-width: 560px;
+  margin-inline: auto;
+}
+.brt-price__amount {
+  display: flex;
+  align-items: baseline;
+  gap: .625rem;
+  justify-content: center;
+  margin: .5rem 0 .25rem;
+}
+.brt-price__now {
+  font-size: clamp(3rem, 7vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -.035em;
+  color: var(--brt-navy);
+  line-height: 1;
+}
+.brt-price__was {
+  font-size: 1.25rem;
+  color: var(--brt-slate);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+.brt-price__note { text-align: center; color: var(--brt-slate); font-size: .9375rem; }
+.brt-price__list { list-style: none; margin: 1.5rem 0; padding: 0; display: grid; gap: .7rem; }
+.brt-price__list li { position: relative; padding-left: 1.75rem; font-size: .9375rem; line-height: 1.5; }
+.brt-price__list li::before {
+  content: "";
+  position: absolute; left: 0; top: .3rem;
+  width: 1.1rem; height: 1.1rem;
+  border-radius: 50%;
+  background: rgba(62,88,117,.14);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 8.4l2.6 2.6L12 5.6' stroke='%233E5875' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1.1rem;
+}
+
+/* --------------------------------------------------------------------------
+   FAQ (native details/summary — no JS)
+   -------------------------------------------------------------------------- */
+.brt-faq { border-top: 1px solid var(--brt-border); }
+.brt-faq details { border-bottom: 1px solid var(--brt-border); }
+.brt-faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 1.15rem 2.5rem 1.15rem 0;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  color: var(--brt-navy);
+  position: relative;
+}
+.brt-faq summary::-webkit-details-marker { display: none; }
+.brt-faq summary::after {
+  content: "";
+  position: absolute; right: .35rem; top: 50%;
+  width: 10px; height: 10px;
+  border-right: 2px solid var(--brt-slate);
+  border-bottom: 2px solid var(--brt-slate);
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform .2s var(--brt-ease);
+}
+.brt-faq details[open] summary::after { transform: translateY(-30%) rotate(-135deg); }
+.brt-faq summary:focus-visible { outline: 2px solid var(--brt-accent); outline-offset: 3px; border-radius: 4px; }
+.brt-faq__a { padding: 0 0 1.35rem; color: var(--brt-slate); font-size: .9688rem; line-height: 1.65; max-width: 62ch; }
+
+/* --------------------------------------------------------------------------
+   Founder
+   -------------------------------------------------------------------------- */
+.brt-founder { display: grid; gap: 1.75rem; align-items: start; }
+@media (min-width: 782px) { .brt-founder { grid-template-columns: 200px 1fr; } }
+.brt-founder__photo {
+  width: 100%; max-width: 200px;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  object-fit: cover;
+  background: var(--brt-off-white);
+  border: 1px solid var(--brt-border);
+}
+.brt-contact { display: flex; flex-wrap: wrap; gap: .625rem; margin-top: 1.25rem; }
+.brt-contact a {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .6rem 1.1rem;
+  border: 1px solid var(--brt-border);
+  border-radius: 999px;
+  font-size: .9375rem;
+  font-weight: 600;
+  color: var(--brt-navy);
+  text-decoration: none;
+  background: #fff;
+  transition: border-color .2s var(--brt-ease), color .2s var(--brt-ease);
+}
+.brt-contact a:hover { border-color: var(--brt-steel); color: var(--brt-steel); }
+
+/* --------------------------------------------------------------------------
+   Forms
+   -------------------------------------------------------------------------- */
+.brt-form { max-width: 640px; }
+.brt-form__row { margin-bottom: 1.35rem; }
+
+.brt-form__label {
+  display: block;
+  font-weight: 600;
+  font-size: .9375rem;
+  color: var(--brt-navy);
+  margin-bottom: .35rem;
+}
+.brt-form__opt {
+  font-weight: 500;
+  font-size: .8125rem;
+  color: var(--brt-slate);
+  margin-left: .4rem;
+}
+.brt-form__help {
+  display: block;
+  font-size: .8438rem;
+  color: var(--brt-slate);
+  margin-bottom: .45rem;
+  line-height: 1.5;
+}
+
+.brt-form__input {
+  width: 100%;
+  padding: .8rem 1rem;
+  font-family: inherit;
+  /* 16px minimum stops iOS Safari zooming the viewport on focus. */
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--brt-charcoal);
+  background: #fff;
+  border: 1.5px solid var(--brt-border);
+  border-radius: var(--brt-radius-sm);
+  transition: border-color .18s var(--brt-ease), box-shadow .18s var(--brt-ease);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.brt-form__input:hover { border-color: #C9C6B8; }
+.brt-form__input:focus {
+  outline: none;
+  border-color: var(--brt-accent);
+  box-shadow: 0 0 0 3px rgba(47,111,237,.18);
+}
+textarea.brt-form__input { resize: vertical; min-height: 108px; }
+
+.brt-form__row--consent { margin-top: 1.75rem; }
+.brt-form__consent {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem;
+  align-items: start;
+  font-size: .9063rem;
+  line-height: 1.6;
+  color: var(--brt-charcoal);
+  cursor: pointer;
+}
+.brt-form__consent input[type="checkbox"] {
+  width: 20px; height: 20px;
+  margin: .15rem 0 0;
+  accent-color: var(--brt-accent);
+  flex: none;
+  cursor: pointer;
+}
+.brt-form__consent input:focus-visible { outline: 2px solid var(--brt-accent); outline-offset: 2px; }
+
+.brt-form__submit { margin-top: 1.5rem; }
+
+.brt-form__privacy {
+  margin-top: 1rem;
+  font-size: .8438rem;
+  color: var(--brt-slate);
+  line-height: 1.6;
+}
+
+.brt-form__errors {
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 1.5px solid #E5A3A3;
+  border-left-width: 4px;
+  border-radius: var(--brt-radius-sm);
+  background: #FDF5F5;
+  color: #8A2E2E;
+  font-size: .9375rem;
+}
+.brt-form__errors p { margin: 0 0 .5rem; }
+.brt-form__errors ul { margin: 0; padding-left: 1.25rem; }
+.brt-form__errors li { margin-bottom: .2rem; }
+
+.brt-form__done {
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  border: 1.5px solid rgba(62,88,117,.35);
+  border-radius: var(--brt-radius);
+  background: #FFFFFF;
+}
+.brt-form__done h3 { margin: 0 0 .75rem; color: var(--brt-navy); font-size: 1.375rem; }
+.brt-form__done p  { margin: 0 0 .85rem; color: var(--brt-charcoal); line-height: 1.65; }
+.brt-form__done-note { color: var(--brt-slate) !important; font-size: .9375rem; }
+
+/* Honeypot: kept out of sight and out of the a11y tree, but still "rendered"
+   so naive bots fill it. Not display:none — some bots skip those. */
+.brt-hp {
+  position: absolute !important;
+  left: -9999px !important;
+  top: auto;
+  width: 1px; height: 1px;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Utility
+   -------------------------------------------------------------------------- */
+.brt-surface { background: var(--brt-off-white); }
+.brt-rule { height: 1px; background: var(--brt-border); border: 0; margin: 0; }
+.brt-center { text-align: center; }
+.brt-measure { max-width: 62ch; margin-inline: auto; }
+
+/* Placeholder marker — anything awaiting real data from the founder */
+.brt-todo {
+  display: inline-block;
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  background: #FFF4D6;
+  border: 1px dashed #D9A441;
+  color: #7A5410;
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .8125rem;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.brt-footer {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 700px)  { .brt-footer { grid-template-columns: 1.6fr 1fr 1fr; } }
+@media (min-width: 1000px) { .brt-footer { grid-template-columns: 2fr 1fr 1fr 1fr; } }
+
+.brt-footer__name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 .4rem;
+  letter-spacing: -.02em;
+}
+.brt-footer__tag {
+  margin: 0 0 1.25rem;
+  color: rgba(255,255,255,.6);
+  font-size: .9375rem;
+  line-height: 1.6;
+  max-width: 34ch;
+}
+.brt-footer__contact { display: flex; flex-wrap: wrap; gap: .5rem; }
+.brt-footer__contact a {
+  display: inline-flex;
+  align-items: center;
+  padding: .45rem .9rem;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 999px;
+  font-size: .875rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+  text-decoration: none;
+  transition: border-color .2s var(--brt-ease), color .2s var(--brt-ease), background-color .2s var(--brt-ease);
+}
+.brt-footer__contact a:hover {
+  border-color: rgba(255,255,255,.5);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+}
+
+.brt-footer__h {
+  font-size: .75rem !important;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.5) !important;
+  margin: 0 0 .9rem !important;
+}
+.brt-footer__col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+.brt-footer__col a {
+  color: rgba(255,255,255,.8);
+  text-decoration: none;
+  font-size: .9375rem;
+  transition: color .18s var(--brt-ease);
+}
+.brt-footer__col a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+.brt-footer__base {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+.brt-footer__base p {
+  margin: 0 0 .35rem;
+  font-size: .8438rem;
+  color: rgba(255,255,255,.55);
+}
+.brt-footer__fine { color: rgba(255,255,255,.4) !important; }
+
+/* --------------------------------------------------------------------------
+   Mobile corrections (found in QA at 375px)
+   -------------------------------------------------------------------------- */
+
+/* Buttons must include their padding in the declared width, otherwise
+   width:100% on mobile overflows the column and scrolls the page sideways. */
+.brt-btn { box-sizing: border-box; }
+.brt-form__input { box-sizing: border-box; }
+
+/* Belt and braces: nothing on the page may scroll the document horizontally. */
+html, body { overflow-x: hidden; max-width: 100%; }
+
+/* Comfortable touch targets (WCAG 2.5.8 asks 24px; 44px is the usable size). */
+.brt-footer__col a {
+  display: inline-block;
+  padding: .55rem 0;
+  min-height: 44px;
+  line-height: 1.7;
+}
+.brt-footer__contact a { min-height: 44px; padding: .6rem 1rem; }
+.brt-contact a { min-height: 44px; }
+
+/* The wide comparison table and document mockups scroll inside themselves
+   rather than widening the page. */
+.brt-compare, .brt-beforeafter { max-width: 100%; }
+.brt-doc__body { overflow-x: auto; }
+
+@media (max-width: 600px) {
+  /* Long mono strings in the raw-input mockup must wrap, not extend. */
+  .brt-doc--raw .brt-doc__body { font-size: .75rem; word-break: break-word; }
+  .brt-grind { font-size: .8125rem; }
+  .brt-chip  { font-size: .875rem; padding: .5rem .85rem; }
+}
+
+/* --------------------------------------------------------------------------
+   Hero — two column: message left, workflow animation right
+   -------------------------------------------------------------------------- */
+.brt-hero {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .brt-hero { grid-template-columns: 1fr 1fr; gap: 3.5rem; }
+}
+
+.brt-hero__copy { min-width: 0; }
+
+.brt-hero-media {
+  position: relative;
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--brt-navy-deep);
+  border: 1px solid rgba(17,29,50,.18);
+  box-shadow: 0 2px 6px rgba(17,29,50,.08), 0 28px 60px -28px rgba(17,29,50,.45);
+  /* Reserve the space before the asset loads so nothing shifts (CLS). */
+  aspect-ratio: 4 / 3;
+}
+.brt-hero-media__el {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Pause / play control, revealed by JS only when a video is present. */
+.brt-hero-media__toggle {
+  position: absolute;
+  right: .75rem;
+  bottom: .75rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: .5rem .9rem;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(10,20,34,.72);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background-color .2s var(--brt-ease);
+}
+.brt-hero-media__toggle:hover { background: rgba(10,20,34,.9); }
+.brt-hero-media__toggle:focus-visible { outline: 3px solid rgba(47,111,237,.55); outline-offset: 2px; }
+.brt-hero-media__toggle-play  { display: none; }
+.brt-hero-media__toggle-pause { display: inline; }
+.brt-hero-media.is-paused .brt-hero-media__toggle-play  { display: inline; }
+.brt-hero-media.is-paused .brt-hero-media__toggle-pause { display: none; }
+
+/* Placeholder shown until the real animation is configured. */
+.brt-hero-media--empty { display: grid; place-items: center; padding: 1.5rem; }
+.brt-hero-media__ph {
+  display: grid;
+  gap: .5rem;
+  justify-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+}
+.brt-hero-media__ph-row,
+.brt-hero-media__ph-engine,
+.brt-hero-media__ph-out {
+  display: block;
+  width: 100%;
+  padding: .6rem .9rem;
+  border-radius: 8px;
+  font-size: .8125rem;
+  font-weight: 600;
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+}
+.brt-hero-media__ph-row {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.14);
+  color: rgba(255,255,255,.72);
+}
+.brt-hero-media__ph-engine {
+  background: rgba(62,88,117,.22);
+  border: 1px solid rgba(62,88,117,.5);
+  color: #9FB3CC;
+}
+.brt-hero-media__ph-out {
+  background: rgba(62,88,117,.22);
+  border: 1px solid rgba(62,88,117,.55);
+  color: #A9C4E8;
+}
+.brt-hero-media__ph-arrow { color: rgba(255,255,255,.35); font-size: 1.1rem; line-height: 1; }
+.brt-hero-media__note {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  margin: 0;
+  padding: .5rem .75rem;
+  font-size: .75rem;
+  text-align: center;
+  color: #7A5410;
+  background: #FFF4D6;
+  border-top: 1px dashed #D9A441;
+}
+
+/* Grid children default to min-width:auto, which lets wide content push the
+   column past the viewport. Both hero columns must be allowed to shrink. */
+.brt-hero__copy,
+.brt-hero__media { min-width: 0; max-width: 100%; }
+.brt-hero-media  { max-width: 100%; }
+
+/* --------------------------------------------------------------------------
+   Every BrijRaj component sizes border-box.
+   Padding and borders must count *inside* a declared width — otherwise
+   width:100% overflows its column. This has bitten the CTA buttons and the
+   hero media already; making it global closes the whole class of bug.
+   -------------------------------------------------------------------------- */
+[class^="brt-"], [class*=" brt-"],
+[class^="brt-"]::before, [class*=" brt-"]::before,
+[class^="brt-"]::after,  [class*=" brt-"]::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Hero workflow visualization — CSS only, no JS, no gradients.
+   A 12s loop: scattered inputs arrive → the workflow engine works them →
+   management-ready outputs appear. Tells the product story before anyone
+   reads a paragraph.
+   ========================================================================== */
+.brt-flowviz {
+  --brt-viz-cycle: 12s;
+  position: relative;
+  display: grid;
+  gap: .5rem;
+  align-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem 1.25rem;
+  color: #fff;
+}
+
+.brt-flowviz__label {
+  display: block;
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .625rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.42);
+  margin-bottom: .5rem;
+}
+
+.brt-flowviz__cards { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+
+.brt-flowviz__card {
+  display: block;
+  padding: .5rem .65rem;
+  border-radius: 7px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: rgba(255,255,255,.82);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Outputs read as resolved: brighter, with a tick. */
+.brt-flowviz__card--out {
+  border-color: rgba(47,111,237,.55);
+  background: rgba(47,111,237,.14);
+  color: #fff;
+}
+.brt-flowviz__card--out::before {
+  content: "✓";
+  margin-right: .35rem;
+  color: #7FA6F5;
+  font-weight: 700;
+}
+
+.brt-flowviz__engine {
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 10px;
+  padding: .7rem .8rem;
+  background: rgba(255,255,255,.04);
+}
+.brt-flowviz__steps {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .3rem;
+}
+.brt-flowviz__step {
+  padding: .3rem .5rem;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .6875rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.55);
+  text-align: center;
+}
+
+.brt-flowviz__arrow {
+  justify-self: center;
+  width: 1px;
+  height: 18px;
+  background: rgba(255,255,255,.22);
+  position: relative;
+}
+.brt-flowviz__arrow::after {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: -1px;
+  width: 5px; height: 5px;
+  border-right: 1px solid rgba(255,255,255,.4);
+  border-bottom: 1px solid rgba(255,255,255,.4);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+/* ---- motion ---------------------------------------------------------- */
+@keyframes brt-viz-in {
+  0%           { opacity: 0; transform: translateY(-9px); }
+  9%, 38%      { opacity: 1; transform: translateY(0); }
+  50%, 93%     { opacity: .28; transform: translateY(7px); }
+  100%         { opacity: 0; transform: translateY(-9px); }
+}
+@keyframes brt-viz-step {
+  0%, 28%      { opacity: .4; border-color: transparent; background: transparent; }
+  34%, 43%     { opacity: 1; border-color: rgba(47,111,237,.6); background: rgba(47,111,237,.16); color: #fff; }
+  50%, 100%    { opacity: .4; border-color: transparent; background: transparent; }
+}
+@keyframes brt-viz-engine {
+  0%, 26%      { border-color: rgba(255,255,255,.22); }
+  36%, 46%     { border-color: rgba(47,111,237,.55); }
+  56%, 100%    { border-color: rgba(255,255,255,.22); }
+}
+@keyframes brt-viz-out {
+  0%, 52%      { opacity: 0; transform: translateY(9px) scale(.97); }
+  63%, 92%     { opacity: 1; transform: translateY(0) scale(1); }
+  100%         { opacity: 0; transform: translateY(9px) scale(.97); }
+}
+@keyframes brt-viz-pulse {
+  0%, 30%, 60%, 100% { opacity: .22; }
+  42%                { opacity: .6; }
+}
+
+.brt-flowviz__stage--in .brt-flowviz__card {
+  animation: brt-viz-in var(--brt-viz-cycle) cubic-bezier(.22,.61,.36,1) infinite;
+  animation-delay: calc(var(--i) * .28s);
+}
+.brt-flowviz__step {
+  animation: brt-viz-step var(--brt-viz-cycle) ease-in-out infinite;
+  animation-delay: calc(var(--i) * .5s);
+}
+.brt-flowviz__engine { animation: brt-viz-engine var(--brt-viz-cycle) ease-in-out infinite; }
+.brt-flowviz__stage--out .brt-flowviz__card {
+  animation: brt-viz-out var(--brt-viz-cycle) cubic-bezier(.22,.61,.36,1) infinite;
+  animation-delay: calc(var(--i) * .22s);
+}
+.brt-flowviz__arrow { animation: brt-viz-pulse var(--brt-viz-cycle) ease-in-out infinite; }
+.brt-flowviz__arrow--two { animation-delay: 1.6s; }
+
+/* Reduced motion: hold the finished state. The story still reads, nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .brt-flowviz__card,
+  .brt-flowviz__step,
+  .brt-flowviz__engine,
+  .brt-flowviz__arrow { animation: none !important; }
+  .brt-flowviz__stage--in .brt-flowviz__card { opacity: .55; transform: none; }
+  .brt-flowviz__stage--out .brt-flowviz__card { opacity: 1; transform: none; }
+  .brt-flowviz__step { opacity: 1; border-color: rgba(47,111,237,.4); }
+}
+
+@media (max-width: 420px) {
+  .brt-flowviz { padding: 1.1rem .9rem; }
+  .brt-flowviz__card { font-size: .6875rem; padding: .42rem .5rem; }
+  .brt-flowviz__step { font-size: .625rem; }
+}
+
+/* ---- launch pricing badge -------------------------------------------- */
+.brt-pricebadge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .5rem;
+  margin-bottom: 1.25rem;
+  padding: .45rem .85rem;
+  border: 1px solid var(--brt-border);
+  border-radius: 999px;
+  background: #fff;
+  font-size: .875rem;
+}
+.brt-pricebadge__now  { font-weight: 700; color: var(--brt-navy); }
+.brt-pricebadge__was  { color: var(--brt-slate); text-decoration: line-through; }
+.brt-pricebadge__note { color: var(--brt-slate); font-size: .8125rem; }
+
+/* The CSS visualization is not bound to the video's 4:3 box — let it fill the
+   column so the hero reads as balanced rather than a small tile beside tall
+   copy. The video variant keeps 4:3 to avoid cropping the supplied asset. */
+.brt-hero-media--viz {
+  aspect-ratio: auto;
+  min-height: 460px;
+  display: flex;
+}
+@media (min-width: 900px) {
+  .brt-hero-media--viz { min-height: 560px; }
+  .brt-flowviz { gap: .75rem; padding: 2rem 1.75rem; }
+  .brt-flowviz__card { font-size: .8125rem; padding: .6rem .75rem; }
+  .brt-flowviz__step { font-size: .75rem; padding: .38rem .55rem; }
+  .brt-flowviz__arrow { height: 26px; }
+}
+
+/* The display size is tuned for a full-width headline. In the two-column hero
+   the H1 only has ~560px, where 4.25rem runs to six lines and stops reading as
+   a single thought. Scale it to the column instead of the viewport. */
+.brt-hero__copy h1 {
+  font-size: clamp(2.25rem, 3.1vw + 0.6rem, 3.15rem) !important;
+  line-height: 1.08;
+  letter-spacing: -0.028em;
+  margin-bottom: 1.1rem;
+}
+@media (min-width: 1200px) {
+  .brt-hero__copy h1 { font-size: 3.35rem !important; }
+}
+.brt-hero__copy .brt-lede { margin-bottom: 1.75rem; }
+
+/* The founder <img> carries width/height attributes (good for CLS), but the
+   height attribute becomes a presentational height:800px that overrides
+   aspect-ratio. height:auto hands control back to the ratio. */
+.brt-founder__photo {
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center 22%;   /* keep the face in frame, not the chest */
+}
+
+/* ==========================================================================
+   Lead capture — the free Starter Kit component
+   ========================================================================== */
+.brt-lead {
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+
+/* Panel: a deliberate stop on the page. Navy so it reads as a moment, not
+   another paragraph. */
+.brt-lead--panel {
+  background: var(--brt-navy);
+  color: #fff;
+  border: 1px solid var(--brt-navy);
+}
+.brt-lead--panel .brt-lead__headline { color: #fff; }
+.brt-lead--panel .brt-lead__sub      { color: rgba(255,255,255,.72); }
+.brt-lead--panel .brt-form__label    { color: rgba(255,255,255,.9); }
+.brt-lead--panel .brt-form__consent  { color: rgba(255,255,255,.72); }
+.brt-lead--panel .brt-form__privacy  { color: rgba(255,255,255,.5); }
+.brt-lead--panel .brt-form__privacy a { color: rgba(255,255,255,.8); }
+.brt-lead--panel .brt-form__input {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.22);
+  color: #fff;
+}
+.brt-lead--panel .brt-form__input::placeholder { color: rgba(255,255,255,.4); }
+.brt-lead--panel .brt-form__input:hover  { border-color: rgba(255,255,255,.4); }
+.brt-lead--panel .brt-form__input:focus  {
+  background: rgba(255,255,255,.11);
+  border-color: var(--brt-accent);
+  box-shadow: 0 0 0 3px rgba(47,111,237,.3);
+}
+
+/* Inline: quieter, for the foot of an article where a navy slab would shout. */
+.brt-lead--inline {
+  background: var(--brt-off-white);
+  border: 1px solid var(--brt-border);
+}
+
+.brt-lead__headline {
+  margin: 0 0 .5rem;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.02em;
+  color: var(--brt-navy);
+}
+.brt-lead__sub {
+  margin: 0 0 1.5rem;
+  font-size: .9688rem;
+  line-height: 1.6;
+  color: var(--brt-slate);
+  max-width: 54ch;
+}
+
+.brt-lead__form { max-width: none; }
+.brt-lead__fields { display: grid; gap: 1rem; }
+@media (min-width: 620px) { .brt-lead__fields { grid-template-columns: 1fr 1fr; } }
+.brt-lead__fields .brt-form__row { margin-bottom: 0; }
+.brt-lead__submit { margin-top: 1.25rem; }
+@media (max-width: 600px) { .brt-lead__submit { width: 100%; } }
+
+.brt-lead__done h3 {
+  margin: 0 0 .75rem;
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  line-height: 1.3;
+  color: inherit;
+}
+.brt-lead--panel .brt-lead__done h3 { color: #fff; }
+.brt-lead__done p { margin: 0 0 1rem; line-height: 1.65; }
+.brt-lead--panel .brt-lead__done p { color: rgba(255,255,255,.75); }
+.brt-lead--panel .brt-lead__done a { color: #fff; }
+.brt-lead--panel .brt-lead__done .brt-btn--primary { color: #fff; }
+
+/* Exit-intent shell: structure only, deliberately not wired to any trigger. */
+.brt-lead--exit { display: none; }
+
+/* --------------------------------------------------------------------------
+   Founder — the portrait is a composed shot (subject, branding wall,
+   "Ideas. Systems. Outcomes."), so it earns real width. A 200px square crop
+   discarded everything the photograph was built to say.
+   -------------------------------------------------------------------------- */
+.brt-founder { grid-template-columns: 1fr; }
+@media (min-width: 782px) {
+  .brt-founder { grid-template-columns: minmax(0, 46%) 1fr; gap: 2.25rem; align-items: center; }
+}
+@media (min-width: 1100px) {
+  .brt-founder { grid-template-columns: minmax(0, 52%) 1fr; gap: 2.75rem; }
+}
+
+.brt-founder__photo {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  /* Follows the configured image, set inline by [brt_founder_photo]. */
+  aspect-ratio: var(--brt-founder-ratio, 3 / 2);
+  object-fit: cover;
+  object-position: center;
+  border-radius: 14px;
+  border: 1px solid var(--brt-border);
+  background: var(--brt-off-white);
+}
+
+/* --------------------------------------------------------------------------
+   Footer brand mark — white version, because the footer is navy.
+   -------------------------------------------------------------------------- */
+.brt-footer__brandline {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: .5rem;
+}
+.brt-footer__mark {
+  width: 30px;
+  height: auto;
+  flex: none;
+  display: block;
+}
+.brt-footer__brandline .brt-footer__name { margin: 0; }
+
+/* --------------------------------------------------------------------------
+   ICP qualification cards — who this is for
+   -------------------------------------------------------------------------- */
+.brt-icp { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 640px)  { .brt-icp { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1040px) { .brt-icp { grid-template-columns: repeat(4, 1fr); } }
+.brt-icp__item {
+  padding: 1.5rem;
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  background: #fff;
+}
+.brt-icp__role {
+  margin: 0 0 .75rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--brt-navy);
+  line-height: 1.3;
+}
+.brt-icp__need {
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .625rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--brt-steel);
+  display: block;
+  margin-bottom: .5rem;
+}
+.brt-icp__item ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.brt-icp__item li {
+  position: relative;
+  padding-left: 1.1rem;
+  font-size: .9063rem;
+  line-height: 1.5;
+  color: var(--brt-charcoal);
+}
+.brt-icp__item li::before {
+  content: "";
+  position: absolute; left: 0; top: .55rem;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--brt-steel);
+}
+
+/* --------------------------------------------------------------------------
+   Before / after — the Monday morning grind vs the workflow
+   -------------------------------------------------------------------------- */
+.brt-ba { display: grid; gap: 1.25rem; align-items: stretch; }
+@media (min-width: 820px) { .brt-ba { grid-template-columns: 1fr auto 1fr; align-items: center; } }
+.brt-ba__col {
+  padding: 1.75rem;
+  border-radius: var(--brt-radius);
+  border: 1px solid var(--brt-border);
+  background: #fff;
+}
+.brt-ba__col--after { border-color: rgba(47,111,237,.4); background: #FBFCFE; }
+.brt-ba__label {
+  display: block;
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .625rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--brt-slate); margin-bottom: 1rem;
+}
+.brt-ba__col--after .brt-ba__label { color: var(--brt-accent); }
+.brt-ba__steps { display: grid; gap: .5rem; }
+.brt-ba__step {
+  padding: .65rem .85rem;
+  border-radius: 7px;
+  background: var(--brt-off-white);
+  font-size: .9063rem;
+  color: var(--brt-charcoal);
+}
+.brt-ba__col--after .brt-ba__step {
+  background: rgba(47,111,237,.07);
+  font-weight: 600;
+  color: var(--brt-navy);
+}
+.brt-ba__arrow { justify-self: center; color: var(--brt-steel); font-size: 1.5rem; line-height: 1; }
+
+/* --------------------------------------------------------------------------
+   Bundle contents
+   -------------------------------------------------------------------------- */
+.brt-bundle {
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  background: #fff;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  max-width: 620px;
+  margin-inline: auto;
+}
+.brt-bundle__list { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; }
+.brt-bundle__list li {
+  position: relative;
+  padding-left: 1.9rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--brt-charcoal);
+}
+.brt-bundle__list li::before {
+  content: "";
+  position: absolute; left: 0; top: .18rem;
+  width: 1.25rem; height: 1.25rem; border-radius: 50%;
+  background: rgba(47,111,237,.12)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 8.4l2.6 2.6L12 5.6' stroke='%232F6FED' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 1.25rem no-repeat;
+}
+.brt-bundle__list strong { color: var(--brt-navy); }
+
+/* --------------------------------------------------------------------------
+   Purchase block
+   -------------------------------------------------------------------------- */
+.brt-purchase { text-align: center; }
+.brt-purchase__note { margin-top: 1rem; font-size: .9063rem; color: var(--brt-slate); line-height: 1.6; }
+.brt-purchase__soon { margin: 0 0 1.25rem; font-weight: 600; color: var(--brt-navy); }
+
+/* --------------------------------------------------------------------------
+   Reviews
+   -------------------------------------------------------------------------- */
+.brt-reviews__heading {
+  text-align: center;
+  margin: 0 0 2.5rem;
+}
+.brt-reviews__grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+@media (min-width: 700px)  { .brt-reviews__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .brt-reviews__grid { grid-template-columns: repeat(3, 1fr); } }
+
+.brt-review {
+  margin: 0;
+  padding: 1.75rem;
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.brt-review__quote {
+  margin: 0 0 1.25rem;
+  padding: 0;
+  border: 0;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--brt-charcoal);
+}
+.brt-review__quote p { margin: 0 0 .75rem; }
+.brt-review__quote p:last-child { margin-bottom: 0; }
+.brt-review__by {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--brt-border);
+  display: grid;
+  gap: .15rem;
+}
+.brt-review__name { font-weight: 700; color: var(--brt-navy); font-size: .9375rem; }
+.brt-review__name a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--brt-border); }
+.brt-review__name a:hover { color: var(--brt-accent); border-color: currentColor; }
+.brt-review__meta { font-size: .875rem; color: var(--brt-slate); }
+
+/* --------------------------------------------------------------------------
+   Trust signals — what stands in for reviews before any exist
+   -------------------------------------------------------------------------- */
+.brt-trust { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 700px)  { .brt-trust { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1040px) { .brt-trust { grid-template-columns: repeat(4, 1fr); } }
+.brt-trust__item {
+  padding: 1.5rem;
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  background: #fff;
+}
+.brt-trust__title {
+  margin: 0 0 .5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--brt-navy);
+  line-height: 1.35;
+}
+.brt-trust__body { margin: 0; font-size: .9063rem; line-height: 1.6; color: var(--brt-slate); }
+
+/* --------------------------------------------------------------------------
+   Sticky purchase bar — product page only, after the hero
+   -------------------------------------------------------------------------- */
+.brt-stickybuy {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  background: var(--brt-navy);
+  border-top: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 -4px 24px -8px rgba(17,29,50,.45);
+  transform: translateY(100%);
+  transition: transform .28s var(--brt-ease);
+  padding: .75rem 1rem;
+  padding-bottom: calc(.75rem + env(safe-area-inset-bottom, 0px));
+}
+.brt-stickybuy.is-visible { transform: translateY(0); }
+
+.brt-stickybuy__inner {
+  max-width: 1180px;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.brt-stickybuy__meta { display: grid; gap: .1rem; min-width: 0; }
+.brt-stickybuy__name {
+  font-size: .9375rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.brt-stickybuy__price { display: flex; align-items: baseline; gap: .45rem; font-size: .875rem; }
+.brt-stickybuy__price strong { color: #fff; font-size: 1.0625rem; }
+.brt-stickybuy__price s { color: rgba(255,255,255,.45); }
+.brt-stickybuy__note { color: rgba(255,255,255,.55); font-size: .75rem; }
+.brt-stickybuy__btn { flex: none; }
+
+/* Keep the bar from covering the last of the page content. */
+body.has-stickybuy { padding-bottom: 84px; }
+
+@media (max-width: 560px) {
+  .brt-stickybuy__inner { gap: .75rem; }
+  .brt-stickybuy__name { font-size: .875rem; }
+  .brt-stickybuy__btn { padding: .7rem 1.1rem; font-size: .9375rem; min-height: 44px; width: auto; }
+  body.has-stickybuy { padding-bottom: 92px; }
+}
+
+/* The mid-page decision points. */
+.brt-midcta {
+  text-align: center;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border: 1px solid rgba(47,111,237,.28);
+  border-radius: var(--brt-radius);
+  background: #FBFCFE;
+  max-width: 640px;
+  margin-inline: auto;
+}
+.brt-midcta__line {
+  margin: 0 0 1.1rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--brt-navy);
+  line-height: 1.45;
+}
+.brt-midcta__note { margin: .9rem 0 0; font-size: .875rem; color: var(--brt-slate); }
+
+/* --------------------------------------------------------------------------
+   "What project leaders are looking for" — problem articulation.
+   Visually weighted like testimonials so the slot is ready for real ones,
+   but carries no attribution, because none has been earned yet.
+   -------------------------------------------------------------------------- */
+.brt-voices { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+@media (min-width: 700px)  { .brt-voices { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1040px) { .brt-voices { grid-template-columns: repeat(3, 1fr); } }
+
+.brt-voice {
+  position: relative;
+  padding: 1.85rem 1.75rem 1.75rem;
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.brt-voice__mark {
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--brt-steel);
+  opacity: .35;
+  margin-bottom: .85rem;
+}
+.brt-voice__text {
+  margin: 0 0 1.25rem;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--brt-charcoal);
+}
+.brt-voice__tag {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--brt-border);
+  font-family: var(--wp--preset--font-family--fira-code, ui-monospace, monospace);
+  font-size: .625rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--brt-steel);
+}
+
+/* --------------------------------------------------------------------------
+   Founder credentials
+   -------------------------------------------------------------------------- */
+.brt-creds { display: grid; gap: .7rem; margin: 1.75rem 0; }
+@media (min-width: 640px) { .brt-creds { grid-template-columns: 1fr 1fr; column-gap: 1.75rem; } }
+.brt-creds__item {
+  position: relative;
+  padding-left: 1.85rem;
+  font-size: .9688rem;
+  line-height: 1.5;
+  color: var(--brt-charcoal);
+}
+.brt-creds__item::before {
+  content: "";
+  position: absolute; left: 0; top: .1rem;
+  width: 1.2rem; height: 1.2rem; border-radius: 50%;
+  background: rgba(62,88,117,.12)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 8.4l2.6 2.6L12 5.6' stroke='%233E5875' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 1.2rem no-repeat;
+}
+.brt-creds__since {
+  display: inline-block;
+  padding: .4rem .85rem;
+  border: 1px solid var(--brt-border);
+  border-radius: 999px;
+  background: #fff;
+  font-size: .8125rem;
+  font-weight: 600;
+  color: var(--brt-navy);
+  margin-bottom: 1.25rem;
+}
+.brt-creds__close {
+  margin: 1.5rem 0 0;
+  padding-left: 1.1rem;
+  border-left: 3px solid var(--brt-steel);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--brt-navy);
+  font-weight: 600;
+}
+.brt-creds__close span { display: block; color: var(--brt-slate); font-weight: 400; }
+
+/* ==========================================================================
+   Polish pass — icons, contact cards, navbar CTA, spacing
+   ========================================================================== */
+
+.brt-ico { flex: none; display: block; }
+
+/* Source chips now carry an icon, so the old dot marker goes. */
+.brt-chip::before { content: none; }
+.brt-chip {
+  gap: .5rem;
+  padding: .55rem 1rem .55rem .8rem;
+  color: var(--brt-charcoal);
+}
+.brt-chip .brt-ico { color: var(--brt-steel); }
+
+/* Contact pills — icon + label, consistent height. */
+.brt-contact a {
+  gap: .5rem;
+  padding: .6rem 1.1rem .6rem .95rem;
+  min-height: 44px;
+}
+.brt-contact a .brt-ico { color: var(--brt-steel); transition: color .2s var(--brt-ease); }
+.brt-contact a:hover .brt-ico { color: var(--brt-accent); }
+
+.brt-footer__contact a { gap: .5rem; padding-left: .9rem; }
+.brt-footer__contact a .brt-ico { color: rgba(255,255,255,.6); }
+.brt-footer__contact a:hover .brt-ico { color: #fff; }
+
+/* Contact cards — the "prefer a different route?" treatment. */
+.brt-contactcards { display: grid; gap: .85rem; grid-template-columns: 1fr; margin-top: 1.5rem; }
+@media (min-width: 700px) { .brt-contactcards { grid-template-columns: repeat(3, 1fr); } }
+.brt-contactcard {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  background: #fff;
+  text-decoration: none;
+  min-height: 72px;
+  transition: border-color .2s var(--brt-ease), transform .18s var(--brt-ease);
+}
+.brt-contactcard:hover { border-color: var(--brt-accent); transform: translateY(-2px); }
+.brt-contactcard .brt-ico { color: var(--brt-steel); }
+.brt-contactcard:hover .brt-ico { color: var(--brt-accent); }
+.brt-contactcard__text { display: grid; gap: .1rem; min-width: 0; }
+.brt-contactcard__label {
+  font-weight: 700; font-size: .9375rem; color: var(--brt-navy);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.brt-contactcard__sub { font-size: .8125rem; color: var(--brt-slate); }
+
+/* Navbar CTA — navy, so it reads as a professional tool purchase rather than
+   an ecommerce urgency button. The loud blue stays for in-page CTAs. */
+.brt-navcta {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .6rem 1.1rem;
+  min-height: 42px;
+  border-radius: 8px;
+  background: var(--brt-navy);
+  color: #fff !important;
+  font-size: .9063rem;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: background-color .2s var(--brt-ease), transform .15s var(--brt-ease);
+}
+.brt-navcta:hover { background: var(--brt-accent); transform: translateY(-1px); }
+.brt-navcta:focus-visible { outline: 3px solid rgba(47,111,237,.45); outline-offset: 2px; }
+@media (max-width: 780px) {
+  .brt-navcta { width: 100%; justify-content: center; margin-top: .5rem; }
+}
+
+/* Founder block: image and text share a top edge rather than centring, so the
+   name lines up with the top of the photograph. */
+@media (min-width: 782px) {
+  .brt-founder { align-items: start; }
+}
+.brt-founder__body > *:first-child { margin-top: 0; }
+
+/* Spacing: a section whose only content is conditional must not leave padding
+   behind when that content is absent. */
+.brt-section--conditional:empty { display: none; }
+.entry-content > *:last-child { margin-bottom: 0; }
+.wp-site-blocks > footer { margin-block-start: 0 !important; }
+
+/* Reviews band — only ever rendered when real reviews exist. */
+.brt-reviews-band {
+  padding-top: var(--wp--preset--spacing--70);
+  padding-bottom: var(--wp--preset--spacing--70);
+  padding-inline: var(--wp--preset--spacing--40);
+}
+.brt-reviews-band .brt-reviews { max-width: 1180px; margin-inline: auto; }
+
+/* --------------------------------------------------------------------------
+   Cookie consent banner
+   Decline is given exactly the same weight as Accept — making refusal harder
+   than agreement is a dark pattern and is called out explicitly under GDPR.
+   -------------------------------------------------------------------------- */
+.brt-consent {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 70;
+  background: var(--brt-navy);
+  border-top: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 -4px 28px -10px rgba(17,29,50,.5);
+  padding: 1.1rem 1.25rem;
+  padding-bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
+  transform: translateY(105%);
+  transition: transform .3s var(--brt-ease);
+}
+.brt-consent.is-open { transform: translateY(0); }
+
+.brt-consent__inner {
+  max-width: 1180px;
+  margin-inline: auto;
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+}
+@media (min-width: 860px) {
+  .brt-consent__inner { grid-template-columns: 1fr auto; gap: 2rem; }
+}
+
+.brt-consent__title {
+  margin: 0 0 .3rem;
+  font-size: .9375rem;
+  font-weight: 700;
+  color: #fff;
+}
+.brt-consent__desc {
+  margin: 0;
+  font-size: .875rem;
+  line-height: 1.6;
+  color: rgba(255,255,255,.72);
+  max-width: 74ch;
+}
+.brt-consent__desc a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+.brt-consent__actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+.brt-consent__btn { min-height: 46px; padding: .65rem 1.35rem; font-size: .9375rem; flex: 1 1 auto; }
+.brt-consent .brt-btn--secondary {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255,255,255,.35);
+}
+.brt-consent .brt-btn--secondary:hover,
+.brt-consent .brt-btn--secondary:focus-visible {
+  border-color: #fff;
+  color: #fff;
+  background: rgba(255,255,255,.06);
+}
+@media (min-width: 860px) {
+  .brt-consent__btn { flex: 0 0 auto; }
+}
+
+/* One bottom bar at a time.
+   Stacking the buy bar above the consent banner needed a fixed offset, which
+   cannot track a banner whose height changes with how the copy wraps - hence
+   the overlap. Consent is a blocking decision, so it takes the slot and the buy
+   bar waits; it slides back the moment a choice is made. */
+body.has-consent-bar .brt-stickybuy {
+  transform: translateY(115%) !important;
+  pointer-events: none;
+}
+body.has-consent-bar { padding-bottom: 0 !important; }
+
+/* Reserve exactly the banner height so the footer is never hidden.
+   --brt-consent-h is measured by the consent script. */
+body.has-consent-bar .wp-site-blocks {
+  padding-bottom: var(--brt-consent-h, 150px);
+}
+
+/* =========================================================================
+   THE DELIVERY REPORTING AUDIT  —  /audit/
+   =========================================================================
+   A landing page, not a site page. It carries no navigation, sits on a
+   narrower measure than the rest of the site, and runs a single accent
+   colour so the one CTA is never competing with anything.
+   ====================================================================== */
+
+/* --- bare header ------------------------------------------------------ */
+
+.brt-bare-header { background: #fff; }
+
+.brt-bare-header .wp-block-site-title a {
+  text-decoration: none;
+  color: var(--brt-navy);
+}
+
+.brt-bare-header__cta { white-space: nowrap; }
+
+/* The audit page has no nav, so there is no hamburger to reveal. Keep the
+   two ends of the header on one line at every width.
+
+   The site-wide rule at 600px sends every .brt-btn full width — correct for a
+   CTA sitting in a column of content, wrong for one sitting beside the logo,
+   where it would push the wordmark off the line. Opt this one button out. */
+@media (max-width: 600px) {
+  .brt-bare-header__cta { width: auto; }
+}
+
+@media (max-width: 480px) {
+  .brt-bare-header__cta { padding: .6rem 1rem; font-size: .875rem; min-height: 42px; }
+  .brt-bare-header .wp-block-site-title { font-size: .9375rem !important; }
+}
+
+/* --- bare footer ------------------------------------------------------ */
+
+.brt-bare-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+}
+
+.brt-bare-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 1.5rem;
+  margin: 0;
+  font-size: .9375rem;
+}
+
+.brt-bare-footer__links a {
+  color: rgba(255,255,255,.82);
+  text-decoration: none;
+  padding: .4rem 0;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.brt-bare-footer__links a:hover { color: #fff; text-decoration: underline; }
+
+.brt-bare-footer__base {
+  margin: 0;
+  font-size: .875rem;
+  color: rgba(255,255,255,.55);
+}
+
+/* --- page shell ------------------------------------------------------- */
+
+.brt-audit {
+  max-width: 820px;
+  margin-inline: auto;
+  padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 7vw, 5rem);
+}
+
+.brt-audit h2 {
+  font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -.022em;
+  line-height: 1.22;
+  color: var(--brt-navy);
+  margin: 0 0 1rem;
+  text-wrap: balance;
+}
+
+.brt-audit h3 {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -.012em;
+  color: var(--brt-navy);
+  margin: 0 0 .3rem;
+}
+
+.brt-audit p { margin: 0 0 1rem; }
+
+.brt-audit__section {
+  padding-top: clamp(2.25rem, 5vw, 3.25rem);
+  margin-top: clamp(2.25rem, 5vw, 3.25rem);
+  border-top: 1px solid var(--brt-border);
+}
+
+.brt-audit__section--quiet {
+  background: var(--brt-off-white);
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius);
+  padding: clamp(1.6rem, 4vw, 2.25rem);
+  margin-top: clamp(2.25rem, 5vw, 3.25rem);
+}
+
+/* --- 01 hero ---------------------------------------------------------- */
+
+.brt-audit__h1 {
+  font-size: clamp(1.85rem, 5.2vw, 2.85rem);
+  font-weight: 800;
+  letter-spacing: -.034em;
+  line-height: 1.08;
+  color: var(--brt-navy);
+  margin: 0 0 1.15rem;
+  text-wrap: balance;
+}
+
+.brt-audit__lead {
+  font-size: clamp(1.0625rem, 1.6vw, 1.1875rem);
+  line-height: 1.6;
+  color: var(--brt-slate);
+  max-width: 62ch;
+}
+
+/* --- 02 promise ------------------------------------------------------- */
+
+.brt-audit__promise {
+  margin-top: clamp(2rem, 4.5vw, 2.75rem);
+  padding: clamp(1.5rem, 4vw, 2.1rem);
+  background: var(--brt-navy);
+  border-radius: var(--brt-radius);
+  color: #fff;
+}
+
+.brt-audit__eyebrow {
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.6);
+  margin: 0 0 .65rem;
+}
+
+.brt-audit__promise-text {
+  font-size: clamp(1.06rem, 1.75vw, 1.24rem);
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: -.016em;
+  color: #fff;
+  margin: 0 0 1.4rem;
+  max-width: 58ch;
+  text-wrap: pretty;
+}
+
+/* On the dark panel the standard primary button would sit navy-on-navy. */
+.brt-audit__promise .brt-btn--primary {
+  background: #fff;
+  color: var(--brt-navy);
+  border-color: #fff;
+}
+
+.brt-audit__promise .brt-btn--primary:hover {
+  background: rgba(255,255,255,.88);
+  border-color: rgba(255,255,255,.88);
+}
+
+.brt-audit__cta { margin-top: .25rem; }
+
+/* --- 03 / 05 / 06 two-column ------------------------------------------ */
+
+.brt-audit__cols {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.75rem);
+}
+
+@media (min-width: 720px) {
+  .brt-audit__cols { grid-template-columns: 1fr 1fr; }
+}
+
+.brt-audit__list {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.brt-audit__list li {
+  position: relative;
+  padding-left: 1.6rem;
+  margin-bottom: .55rem;
+  color: var(--brt-slate);
+  line-height: 1.55;
+}
+
+.brt-audit__list li strong { color: var(--brt-navy); font-weight: 600; }
+
+.brt-audit__list li::before {
+  content: "";
+  position: absolute;
+  left: .25rem;
+  top: .62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brt-steel);
+}
+
+.brt-audit__list--yes li::before {
+  content: "";
+  left: .1rem;
+  top: .42em;
+  width: 10px;
+  height: 6px;
+  border: 2px solid #3E7A5E;
+  border-top: 0;
+  border-right: 0;
+  border-radius: 0;
+  background: none;
+  transform: rotate(-45deg);
+}
+
+.brt-audit__list--no li::before {
+  content: "×";
+  left: .15rem;
+  top: 0;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  color: #B4762A;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.brt-audit__aside {
+  font-size: .9375rem;
+  color: var(--brt-slate);
+  margin: 1rem 0 0;
+  max-width: 62ch;
+}
+
+.brt-audit__section--quiet .brt-audit__aside { margin-top: 0; }
+
+/* --- 04 timeline ------------------------------------------------------ */
+
+.brt-audit__steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.brt-audit__steps > li {
+  display: grid;
+  gap: .3rem 1.4rem;
+  padding: 1.15rem 0;
+  border-top: 1px solid var(--brt-border);
+}
+
+.brt-audit__steps > li:first-child { border-top: 0; padding-top: 0; }
+
+@media (min-width: 620px) {
+  .brt-audit__steps > li { grid-template-columns: 96px minmax(0, 1fr); }
+}
+
+.brt-audit__step-k {
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--brt-accent);
+  padding-top: .2rem;
+}
+
+.brt-audit__steps p {
+  margin: 0;
+  color: var(--brt-slate);
+  line-height: 1.58;
+  max-width: 62ch;
+}
+
+/* --- 08 who ----------------------------------------------------------- */
+
+.brt-audit__who p { color: var(--brt-slate); max-width: 62ch; }
+.brt-audit__who p strong { color: var(--brt-navy); }
+
+/* --- 09 reviews ------------------------------------------------------- */
+
+.brt-audit__reviews {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 620px) {
+  .brt-audit__reviews { grid-template-columns: 1fr 1fr; }
+}
+
+.brt-audit__review {
+  border: 1px solid var(--brt-border);
+  border-radius: var(--brt-radius-sm);
+  padding: 1.1rem 1.25rem;
+  background: #fff;
+}
+
+.brt-audit__review-q {
+  margin: 0 0 .75rem;
+  color: var(--brt-charcoal);
+  font-size: .9688rem;
+  line-height: 1.6;
+}
+
+.brt-audit__review-m { margin: 0; display: flex; flex-direction: column; gap: .1rem; }
+
+.brt-audit__review-n { font-weight: 700; color: var(--brt-navy); font-size: .9375rem; }
+.brt-audit__review-r { font-size: .875rem; color: var(--brt-slate); }
+
+.brt-audit__review-s {
+  font-size: .8125rem;
+  color: var(--brt-steel);
+  font-weight: 600;
+  margin-top: .2rem;
+}
+
+/* --- 10 FAQ ----------------------------------------------------------- */
+
+.brt-audit__faq { margin-top: .5rem; }
+
+/* --- 11 form ---------------------------------------------------------- */
+
+.brt-audit__formwrap { scroll-margin-top: 1.5rem; }
+
+.brt-audit__form { margin-top: 1.5rem; max-width: 34rem; }
+
+/* The situation field is the most valuable input on the site — their own
+   words about their own problem. A small box gets one-line answers. */
+.brt-form__input--tall { min-height: 150px; }
+
+.brt-form__select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%233E5875' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.75rem;
+}
+
+/* Sized to its label on desktop; the site-wide 600px rule takes it full
+   width on mobile, which is the right thumb target and is left alone. */
+@media (min-width: 601px) {
+  .brt-audit__form .brt-form__submit { width: auto; }
+}
