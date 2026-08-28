@@ -69,6 +69,19 @@ add_action('phpmailer_init', static function ($phpmailer): void {
     $phpmailer->SMTPSecure = brijraj_env('SMTP_SECURE', 'tls');
     $phpmailer->CharSet    = 'UTF-8';
 
+    // Every form sends twice: a confirmation to the person and a notification
+    // to the owner. Without this each send opens its own authenticated TLS
+    // session to Google, which is the slow part — it roughly doubles how long
+    // the visitor watches a spinning submit button. Keeping the connection
+    // open makes the second message near-free. PHP closes it when the request
+    // ends, so nothing needs tearing down.
+    $phpmailer->SMTPKeepAlive = true;
+
+    // Do not let a slow or unreachable SMTP host hold a form submission open
+    // indefinitely; failing after ten seconds is far better for the visitor
+    // than a hung request, and the lead is already stored by this point.
+    $phpmailer->Timeout = 10;
+
     // The envelope sender must match the authenticated mailbox, or Google
     // rejects the message and DKIM alignment is lost.
     $from = brijraj_env('SMTP_FROM', brijraj_env('SMTP_USER'));

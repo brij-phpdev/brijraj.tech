@@ -235,6 +235,49 @@ add_shortcode('brt_lead_form', static function ($atts): string {
     return brijraj_lead_form($args);
 });
 
+/**
+ * [brt_starter_delivered] — the body of the Starter Kit confirmation page.
+ *
+ * The download link and the delivery event used to live in the inline success
+ * panel. That panel no longer renders now the form redirects, so both moved
+ * here; without this the lead_download event would simply have stopped firing
+ * and the funnel would look broken in GA4 rather than in the page.
+ */
+add_shortcode('brt_starter_delivered', static function (): string {
+    $kit  = brijraj_starter_kit_url();
+    $from = isset($_GET['from']) ? sanitize_key((string) $_GET['from']) : '';
+
+    ob_start();
+    ?>
+<div class="brt-lead__done" role="status" data-lead-delivered data-from="<?php echo esc_attr($from); ?>">
+    <?php if ($kit !== '') : ?>
+        <p>You can download it straight away:</p>
+        <p>
+            <a class="brt-btn brt-btn--primary" data-cta="starter_download"
+               href="<?php echo esc_url($kit); ?>" download>Download the Starter Kit</a>
+        </p>
+        <p class="brt-audit__aside">A copy is in your inbox too, so you can come back to it later.</p>
+    <?php else : ?>
+        <p class="brt-audit__aside">I send this one personally rather than automatically, so it will land
+        shortly. If it has not arrived within a few hours, reply to that email and I will chase it.</p>
+    <?php endif; ?>
+</div>
+
+<script>
+(function () {
+  var el = document.querySelector('[data-lead-delivered]');
+  if (!el || typeof window.gtag !== 'function') { return; }
+  window.gtag('event', 'lead_download', {
+    stage: 'delivered',
+    lead_location: el.getAttribute('data-from') || 'unknown'
+  });
+})();
+</script>
+    <?php
+
+    return (string) ob_get_clean();
+});
+
 /* -------------------------------------------------------------------------
  * Submission
  * ---------------------------------------------------------------------- */
@@ -259,8 +302,15 @@ add_action('template_redirect', static function (): void {
     $fail = static function (array $errors, array $values = []) use ($location): void {
         $GLOBALS['brijraj_lead_state'] = ['location' => $location, 'errors' => $errors, 'values' => $values];
     };
-    $pass = static function () use ($location): void {
-        $GLOBALS['brijraj_lead_state'] = ['location' => $location, 'success' => true];
+    // Post-redirect-get, so a refresh cannot resubmit and the visitor ends on
+    // a page that is unambiguously a "done" state. The location is carried
+    // through so the confirmation can still report where the request came
+    // from and the analytics keep their attribution.
+    $pass = static function (?callable $after = null) use ($location): void {
+        brijraj_redirect_then(
+            add_query_arg('from', $location, home_url('/resources/starter-kit/received/')),
+            $after
+        );
     };
 
     // Nonce.
@@ -388,9 +438,6 @@ add_action('template_redirect', static function (): void {
             'real meeting and you will know quickly whether the approach suits you.',
             '',
             'If anything does not open, just reply to this email.',
-            '',
-            'Brij Raj Singh',
-            'BrijRaj.Tech',
         ];
         $subject = 'Your AI Project Delivery Starter Kit';
     } else {
@@ -402,38 +449,39 @@ add_action('template_redirect', static function (): void {
             'I am sending it to you personally rather than automatically, so it',
             'will land in your inbox shortly. If it has not arrived within a few',
             'hours, reply here and I will chase it.',
-            '',
-            'Brij Raj Singh',
-            'BrijRaj.Tech',
         ];
         $subject = 'Your Starter Kit is on its way';
     }
 
-    wp_mail(
-        $email,
-        $subject,
-        implode("\n", $body),
-        ['Reply-To: ' . brijraj_notification_email(), 'From: ' . $site . ' <' . brijraj_notification_email() . '>']
-    );
+    $from_label = $locations[$location] ?? $location;
 
-    // Notify.
-    wp_mail(
-        brijraj_notification_email(),
-        sprintf('[BrijRaj.Tech] Starter Kit request — %s', $first),
-        implode("\n", [
-            'New Starter Kit request.',
-            '',
-            'Name:     ' . $first,
-            'Email:    ' . $email,
-            'From:     ' . ($locations[$location] ?? $location),
-            'Page:     ' . $source,
-            'Consent:  yes',
-            'Received: ' . current_time('mysql'),
-        ]),
-        ['Reply-To: ' . $first . ' <' . $email . '>']
-    );
+    // Redirect first; both messages go out once the visitor has already landed
+    // on the confirmation page. The subscriber record is stored above, so
+    // nothing here can cost a lead.
+    $pass(static function () use ($email, $subject, $body, $site, $first, $from_label, $source): void {
+        wp_mail(
+            $email,
+            $subject,
+            implode("\n", $body),
+            ['Reply-To: ' . brijraj_notification_email(), 'From: ' . $site . ' <' . brijraj_notification_email() . '>']
+        );
 
-    $pass();
+        wp_mail(
+            brijraj_notification_email(),
+            sprintf('[Starter Kit] %s', $first),
+            implode("\n", [
+                'New Starter Kit request.',
+                '',
+                'Name:     ' . $first,
+                'Email:    ' . $email,
+                'From:     ' . $from_label,
+                'Page:     ' . $source,
+                'Consent:  yes',
+                'Received: ' . current_time('mysql'),
+            ]),
+            ['Reply-To: ' . $first . ' <' . $email . '>']
+        );
+    });
 });
 
 /* -------------------------------------------------------------------------

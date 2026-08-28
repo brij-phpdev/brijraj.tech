@@ -25,6 +25,22 @@ if (! defined('ABSPATH')) {
 
 const BRIJRAJ_LEAD_CPT = 'brt_lead';
 
+/** Where a completed challenge submission lands. */
+const BRIJRAJ_CHALLENGE_DONE = '/resources/share-your-challenge/received/';
+
+/**
+ * Finish a submission on its own URL.
+ *
+ * Post-redirect-get: refreshing the confirmation cannot resubmit, the back
+ * button behaves, and the visitor ends on a page that is unambiguously a
+ * "done" state rather than the form they just filled with a panel bolted on
+ * top of it.
+ */
+function brijraj_challenge_finish(?callable $after = null): void
+{
+    brijraj_redirect_then(home_url(BRIJRAJ_CHALLENGE_DONE), $after);
+}
+
 /**
  * Where notifications go. Kept as a filterable helper so it is defined once.
  */
@@ -230,15 +246,13 @@ add_action('template_redirect', static function (): void {
     // Honeypot: a real person never fills this in.
     if (trim((string) ($_POST["brtf_website"] ?? "")) !== '') {
         // Pretend it worked. Bots get no signal to iterate against.
-        $GLOBALS['brijraj_form_state'] = ['success' => true];
-        return;
+        brijraj_challenge_finish();
     }
 
     // Time trap: a human cannot complete this in under three seconds.
     $started = (int) ($_POST['brijraj_t'] ?? 0);
     if ($started > 0 && (time() - $started) < 3) {
-        $GLOBALS['brijraj_form_state'] = ['success' => true];
-        return;
+        brijraj_challenge_finish();
     }
 
     foreach (brijraj_challenge_fields() as $key => $f) {
@@ -325,14 +339,20 @@ add_action('template_redirect', static function (): void {
         $lines[] = 'Read in admin: ' . admin_url('post.php?post=' . $post_id . '&action=edit');
     }
 
-    wp_mail(
-        brijraj_notification_email(),
-        sprintf('[BrijRaj.Tech] Challenge from %s', $values['name']),
-        implode("\n", $lines),
-        ['Reply-To: ' . $values['name'] . ' <' . $values['email'] . '>']
-    );
+    brijraj_challenge_finish(static function () use ($values, $lines): void {
+        // The sender hears back before the owner does.
+        brijraj_send_confirmation('challenge', (string) $values['email'], [
+            'name'    => (string) $values['name'],
+            'company' => (string) ($values['company'] ?? ''),
+        ]);
 
-    $GLOBALS['brijraj_form_state'] = ['success' => true];
+        wp_mail(
+            brijraj_notification_email(),
+            sprintf('[Challenge] %s%s', $values['name'], $values['company'] !== '' ? ' - ' . $values['company'] : ''),
+            implode("\n", $lines),
+            ['Reply-To: ' . $values['name'] . ' <' . $values['email'] . '>']
+        );
+    });
 });
 
 /**

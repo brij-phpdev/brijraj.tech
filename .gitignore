@@ -39,3 +39,7 @@ wp-cli.local.yml
 *.bak-*
 *.bak2-*
 .bak-*/
+
+# PHP error logs (no extension, so *.log does not catch them)
+error_log
+**/error_log

@@ -24,6 +24,12 @@ if (! defined('ABSPATH')) {
  */
 require_once __DIR__ . '/inc/mail.php';
 
+/**
+ * Confirmation emails sent to whoever filled a form. Loaded before the form
+ * modules so every one of them can reach brijraj_send_confirmation().
+ */
+require_once __DIR__ . '/inc/notify.php';
+
 require_once __DIR__ . '/inc/cta.php';
 
 /**

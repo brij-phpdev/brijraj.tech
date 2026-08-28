@@ -209,10 +209,6 @@ add_action('init', static function (): void {
  * an enquiry surfaces. A bubble that cannot be missed is the difference
  * between a reply within a day and a lead going cold unnoticed.
  */
-add_filter('add_menu_classes', static function (string $menu): string {
-    return $menu;
-});
-
 add_action('admin_menu', static function (): void {
     $unread = (int) (new WP_Query([
         'post_type'      => BRIJRAJ_AUDIT_CPT,
@@ -228,6 +224,11 @@ add_action('admin_menu', static function (): void {
     }
 
     global $menu;
+
+    // Not populated in every context that fires admin_menu (WP-CLI, for one).
+    if (! is_array($menu)) {
+        return;
+    }
 
     foreach ($menu as $i => $item) {
         if (($item[2] ?? '') !== 'edit.php?post_type=' . BRIJRAJ_AUDIT_CPT) {
@@ -394,10 +395,32 @@ add_action('template_redirect', static function (): void {
         do_action('brijraj_lead_captured', $values, (int) $post_id);
     }
 
-    brijraj_audit_notify($values, is_wp_error($post_id) ? 0 : (int) $post_id, $utm);
+    $mail_id = is_wp_error($post_id) ? 0 : (int) $post_id;
 
-    wp_safe_redirect(home_url('/' . BRIJRAJ_AUDIT_SLUG . '/' . BRIJRAJ_AUDIT_DONE_SLUG . '/'));
-    exit;
+    // Redirect first, then mail. The enquiry is already stored, so the visitor
+    // has no reason to wait on two SMTP round trips.
+    brijraj_redirect_then(
+        home_url('/' . BRIJRAJ_AUDIT_SLUG . '/' . BRIJRAJ_AUDIT_DONE_SLUG . '/'),
+        static function () use ($values, $mail_id, $utm): void {
+            // The sender hears back first. They have just handed over their
+            // situation in their own words; silence is how you lose them.
+            brijraj_send_confirmation('audit', (string) $values['email'], [
+                'name'    => (string) $values['fullname'],
+                'company' => (string) $values['company'],
+            ]);
+
+            $sent = brijraj_audit_notify($values, $mail_id, $utm);
+
+            // Stamped on the record so it is possible to tell, later and from
+            // wp-admin alone, whether the notification actually left the
+            // server. Without it a mail failure after the response has gone is
+            // completely invisible.
+            if ($mail_id > 0) {
+                update_post_meta($mail_id, '_brt_notified_at', current_time('mysql'));
+                update_post_meta($mail_id, '_brt_notify_ok', $sent ? '1' : '0');
+            }
+        }
+    );
 });
 
 /**
@@ -447,7 +470,7 @@ function brijraj_audit_is_qualified(array $v): bool
  * @param array<string,mixed>  $values
  * @param array<string,string> $utm
  */
-function brijraj_audit_notify(array $values, int $post_id, array $utm = []): void
+function brijraj_audit_notify(array $values, int $post_id, array $utm = []): bool
 {
     $fields = brijraj_audit_fields();
 
@@ -494,7 +517,7 @@ function brijraj_audit_notify(array $values, int $post_id, array $utm = []): voi
         $lines[] = 'Open in admin: ' . admin_url('post.php?post=' . $post_id . '&action=edit');
     }
 
-    wp_mail(
+    return (bool) wp_mail(
         brijraj_notification_email(),
         $subject,
         implode("\n", $lines),
