@@ -99,9 +99,9 @@ function brijraj_greeting(string $full): string
 /**
  * Send the confirmation that goes to whoever filled the form.
  *
- * @param string               $type  audit|challenge
- * @param string               $to    Recipient address.
- * @param array<string, mixed> $data  Submission values, for personalisation.
+ * @param string               $type audit|challenge
+ * @param string               $to   Recipient address.
+ * @param array<string, mixed> $data Submission values, for personalisation.
  */
 function brijraj_send_confirmation(string $type, string $to, array $data = []): bool
 {
@@ -111,53 +111,83 @@ function brijraj_send_confirmation(string $type, string $to, array $data = []): 
 
     $name    = (string) ($data['name'] ?? '');
     $company = trim((string) ($data['company'] ?? ''));
+    $hi      = brijraj_greeting($name);
     $from    = get_bloginfo('name') . ' <' . brijraj_notification_email() . '>';
     $headers = ['Reply-To: ' . brijraj_notification_email(), 'From: ' . $from];
 
     if ($type === 'audit') {
-        $subject = $company !== ''
+        $subject   = $company !== ''
             ? sprintf('Got your note about reporting at %s', $company)
             : 'Got your note about delivery reporting';
+        $preheader = 'I reply within one working day - here is what happens next.';
 
-        $body = [
-            brijraj_greeting($name),
+        $html = brijraj_mail_h('Got it — thanks.')
+            . brijraj_mail_p(esc_html($hi))
+            . brijraj_mail_p('Thanks for sending that over. It has reached me, and I read these properly rather than skimming them.', true)
+            . brijraj_mail_panel('What happens next', 'I reply within <strong>one working day</strong>, usually sooner. If it looks like a fit I will suggest a 30-minute call — I hold slots on Tuesday and Thursday late mornings. If it is not a fit I will tell you that too, and point you at whatever I think would actually help instead.')
+            . brijraj_mail_p('Nothing needed from you in the meantime.')
+            . brijraj_mail_p('One thing worth knowing before we talk: the engagement starts with a week of light time tracking across your PMs. About two minutes a day each — it is what makes the result a measured number rather than an opinion.')
+            . brijraj_mail_button(home_url('/audit/'), 'Re-read what the audit covers');
+
+        $text = implode("\n", [
+            $hi,
             '',
             'Thanks for sending that over - it has reached me, and I read these',
             'properly rather than skimming them.',
             '',
-            'What happens next: I will reply within one working day, usually',
-            'sooner. If it looks like a fit I will suggest a 30-minute call - I',
-            'hold slots on Tuesday and Thursday late mornings. If it is not a fit',
-            'I will tell you that too, and point you at whatever I think would',
-            'actually help instead.',
+            'WHAT HAPPENS NEXT',
+            'I reply within one working day, usually sooner. If it looks like a fit',
+            'I will suggest a 30-minute call - I hold slots on Tuesday and Thursday',
+            'late mornings. If it is not a fit I will tell you that too, and point',
+            'you at whatever I think would actually help instead.',
             '',
             'Nothing needed from you in the meantime.',
             '',
             'One thing worth knowing before we talk: the engagement starts with a',
-            'week of light time tracking across your PMs. It is about two minutes',
-            'a day each, and it is what makes the result a measured number rather',
-            'than an opinion.',
-        ];
+            'week of light time tracking across your PMs. About two minutes a day',
+            'each - it is what makes the result a measured number rather than an',
+            'opinion.',
+            '',
+            home_url('/audit/'),
+        ]);
     } elseif ($type === 'challenge') {
-        $subject = 'Got your delivery challenge';
+        $subject   = 'Got your delivery challenge';
+        $preheader = 'I read every one of these personally. Give me a couple of working days.';
 
-        $body = [
-            brijraj_greeting($name),
+        $html = brijraj_mail_h('Got it — thanks.')
+            . brijraj_mail_p(esc_html($hi))
+            . brijraj_mail_p('Thanks for writing that up. It has reached me.', true)
+            . brijraj_mail_panel('What happens next', 'I read every one of these personally, and I reply when it is something I can genuinely help with rather than sending everyone the same answer. Give me <strong>a couple of working days</strong>.')
+            . brijraj_mail_p('If it is a coordination or reporting problem specifically, that is the work I spend most of my time on — so expect a longer reply.');
+
+        $text = implode("\n", [
+            $hi,
             '',
             'Thanks for writing that up - it has reached me.',
             '',
-            'I read every one of these personally, and I reply when it is',
-            'something I can genuinely help with rather than sending everyone the',
-            'same answer. Give me a couple of working days.',
+            'WHAT HAPPENS NEXT',
+            'I read every one of these personally, and I reply when it is something',
+            'I can genuinely help with rather than sending everyone the same answer.',
+            'Give me a couple of working days.',
             '',
-            'If it is a coordination or reporting problem specifically, that is',
-            'the work I spend most of my time on, so expect a longer reply.',
-        ];
+            'If it is a coordination or reporting problem specifically, that is the',
+            'work I spend most of my time on, so expect a longer reply.',
+        ]);
     } else {
         return false;
     }
 
-    return (bool) wp_mail($to, $subject, implode("\n", $body), $headers);
+    // The plain-text alternative carries the signature the HTML frame already
+    // shows, so both halves of the message end the same way.
+    $text .= "\n" . brijraj_mail_signature() . "\n";
+
+    return brijraj_send_html_mail(
+        $to,
+        $subject,
+        brijraj_mail_html($preheader, $html),
+        $text,
+        $headers
+    );
 }
 
 /* -------------------------------------------------------------------------
@@ -218,12 +248,30 @@ add_filter('wp_mail', static function (array $args): array {
         return $args;
     }
 
-    // Only sign plain text. An HTML message would need the block marked up to
-    // match, and none of this site's mail is HTML.
+    // Only sign plain text. An HTML message carries the signature inside its
+    // own frame, and appending this block to it drops raw text below the
+    // markup.
+    //
+    // Content type is checked three ways because it can be set three ways: as
+    // a header, through the wp_mail_content_type filter (which is how the
+    // HTML confirmations do it, so a header check alone misses them), or
+    // implied by the body itself.
     $headers = $args['headers'] ?? [];
     $headers = is_array($headers) ? implode(' ', $headers) : (string) $headers;
 
     if (stripos($headers, 'text/html') !== false) {
+        return $args;
+    }
+
+    if (isset($GLOBALS['brijraj_mail_alt'])) {
+        return $args;
+    }
+
+    if (stripos((string) apply_filters('wp_mail_content_type', 'text/plain'), 'text/html') !== false) {
+        return $args;
+    }
+
+    if (stripos(ltrim($body), '<!doctype html') === 0 || stripos(ltrim($body), '<html') === 0) {
         return $args;
     }
 

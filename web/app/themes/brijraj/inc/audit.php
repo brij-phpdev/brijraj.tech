@@ -730,7 +730,11 @@ function brijraj_audit_form(array $errors = [], array $old = []): string
 {
     ob_start();
     ?>
-<form class="brt-form brt-audit__form" method="post" action="<?php echo esc_url(home_url('/' . BRIJRAJ_AUDIT_SLUG . '/#audit-form')); ?>" novalidate>
+<?php // No #audit-form fragment on the action: a browser carries the fragment
+      // through a 302, so a successful submission would land on
+      // /audit/received/#audit-form and read as though it had not navigated
+      // properly. The error path adds the fragment back when it needs to. ?>
+<form class="brt-form brt-audit__form" method="post" action="<?php echo esc_url(home_url('/' . BRIJRAJ_AUDIT_SLUG . '/')); ?>" novalidate>
   <?php wp_nonce_field('brijraj_audit', 'brijraj_audit_nonce'); ?>
   <input type="hidden" name="brijraj_form" value="audit">
   <input type="hidden" name="brijraj_t" value="<?php echo esc_attr((string) time()); ?>">
