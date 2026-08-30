@@ -536,7 +536,7 @@ function brijraj_audit_notify(array $values, int $post_id, array $utm = []): boo
  * destinations configured in wp-admin, whereas these are in-page anchors to
  * the form. The data-cta attribute keeps them on the same analytics listener.
  */
-function brijraj_audit_button(string $location, string $label = 'See if it fits'): string
+function brijraj_audit_button(string $location, string $label = 'Request My Delivery Reporting Audit'): string
 {
     return sprintf(
         '<a class="brt-btn brt-btn--primary brt-audit__cta" href="#audit-form" data-cta="audit_%s" data-cta-location="%s">%s <span aria-hidden="true">&rarr;</span></a>',
@@ -575,6 +575,17 @@ function brijraj_audit_page(): string
     <p class="brt-audit__eyebrow">The Delivery Reporting Audit &amp; Install</p>
     <p class="brt-audit__promise-text">In three weeks, you'll know exactly how many hours a week your delivery team loses to reporting — measured across a real baseline week, not estimated — and you'll have a system that reduces it, owned by your team.</p>
     <?php echo brijraj_audit_button('hero'); ?>
+  </section>
+
+  <?php /* 02b — early credibility. The same four reviews as the full section
+           below, in the compact strip layout: this is reinforcement at the
+           point of doubt, not a second testimonials block. */ ?>
+  <section class="brt-audit__proofstrip">
+    <?php echo brijraj_reviews_html([
+        'layout'  => 'strip',
+        'heading' => 'Feedback from clients',
+        'note'    => false,
+    ]); ?>
   </section>
 
   <?php /* 03 — qualification, in public. Reads as confidence, and saves the bad-fit calls. */ ?>
@@ -638,7 +649,10 @@ function brijraj_audit_page(): string
     </ol>
   </section>
 
-  <?php /* 05 + 06 — deliverables and the client's side of the bargain. */ ?>
+  <?php /* 05 — deliverables. The client's side of the bargain used to sit
+           beside this; it now runs immediately above the form, where it
+           reassures someone who has decided rather than filtering someone who
+           is still deciding. Nothing was removed. */ ?>
   <section class="brt-audit__section">
     <div class="brt-audit__cols">
       <div class="brt-audit__col">
@@ -651,17 +665,6 @@ function brijraj_audit_page(): string
           <li><strong>Recorded walkthrough</strong> — so it survives your next hire</li>
           <li><strong>30-day watch list</strong> — the three things most likely to break, and what to do about each</li>
         </ul>
-      </div>
-      <div class="brt-audit__col">
-        <h2>What I need from you</h2>
-        <ul class="brt-audit__list">
-          <li>A sponsor who can ask people to cooperate — an owner, MD or delivery head</li>
-          <li>A named person who'll own the system afterwards, identified at the start</li>
-          <li>30 minutes from each PM, once</li>
-          <li>One week of light time tracking from the delivery team</li>
-          <li>Read access to your project tool, and your last four client status reports</li>
-        </ul>
-        <p class="brt-audit__aside">Engagements are 50% upfront. Not for cash flow — a baseline week that nobody commits to doesn't get done, and without it there's nothing to measure against.</p>
       </div>
     </div>
   </section>
@@ -690,6 +693,12 @@ function brijraj_audit_page(): string
     ]); ?>
   </section>
 
+  <?php /* 09b — the reader who is convinced by the proof needs something to
+           click. Same transaction, same anchor, no competing offer. */ ?>
+  <div class="brt-audit__ctaband">
+    <?php echo brijraj_audit_button('after_proof'); ?>
+  </div>
+
   <?php /* 10 — FAQ. Same array feeds the schema, so the two cannot drift. */ ?>
   <section class="brt-audit__section">
     <h2>Questions</h2>
@@ -703,9 +712,30 @@ function brijraj_audit_page(): string
     </div>
   </section>
 
+  <?php /* 10b — the FAQ's job is to remove the last objection. Give the reader
+           who is now convinced somewhere to go. */ ?>
+  <div class="brt-audit__ctaband">
+    <?php echo brijraj_audit_button('after_faq'); ?>
+  </div>
+
+  <?php /* 06 — relocated from beside "What you get". Sequencing changed, wording
+           and requirements unchanged: this is what the engagement will ask of
+           them, read at the point where they have already decided to ask. */ ?>
+  <section class="brt-audit__section">
+    <h2>What we'll need to run the audit</h2>
+    <ul class="brt-audit__list">
+      <li>A sponsor who can ask people to cooperate — an owner, MD or delivery head</li>
+      <li>A named person who'll own the system afterwards, identified at the start</li>
+      <li>30 minutes from each PM, once</li>
+      <li>One week of light time tracking from the delivery team</li>
+      <li>Read access to your project tool, and your last four client status reports</li>
+    </ul>
+    <p class="brt-audit__aside">Engagements are 50% upfront. Not for cash flow — a baseline week that nobody commits to doesn't get done, and without it there's nothing to measure against.</p>
+  </section>
+
   <?php /* 11 — the form. */ ?>
   <section class="brt-audit__section brt-audit__formwrap" id="audit-form">
-    <h2>See if it fits</h2>
+    <h2>Request the audit</h2>
     <p>A few questions so I know whether I can help before we spend time on a call. If it's not a fit I'll say so and tell you what would help instead.</p>
     <p class="brt-audit__aside">I reply within one working day.</p>
 
@@ -800,7 +830,9 @@ function brijraj_audit_form(array $errors = [], array $old = []): string
     <input type="text" id="brt_audit_website" name="brtf_website" tabindex="-1" autocomplete="off">
   </div>
 
-  <button type="submit" class="brt-btn brt-btn--primary brt-form__submit" data-cta="audit_submit" data-cta-location="form">Send this to Brij</button>
+  <button type="submit" class="brt-btn brt-btn--primary brt-form__submit" data-cta="audit_submit" data-cta-location="form">Request My Delivery Reporting Audit</button>
+
+  <p class="brt-form__reassure">No payment. I&rsquo;ll review the details and confirm whether the audit is a fit.</p>
 
   <p class="brt-form__privacy">
     Used only to reply to you about this enquiry. Never sold or shared.

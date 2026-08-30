@@ -2326,3 +2326,39 @@ body.has-consent-bar .wp-site-blocks {
 }
 
 .brt-res__item a { font-weight: 600; font-size: .9375rem; }
+
+/* --- proof strip, high on the page ------------------------------------
+   Early credibility. Deliberately quieter than the full grid further down:
+   this is reinforcement at the point of doubt, not a second testimonials
+   section competing with it. */
+.brt-audit__proofstrip {
+  margin-top: clamp(1.75rem, 4vw, 2.5rem);
+  padding: clamp(1.15rem, 3vw, 1.5rem) 0 0;
+  border-top: 1px solid var(--brt-border);
+}
+.brt-audit__proofstrip .brt-proof__h {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--brt-steel);
+  margin-bottom: .9rem;
+}
+.brt-audit__proofstrip .brt-proof__name { font-size: .875rem; }
+.brt-audit__proofstrip .brt-proof__role { font-size: .8125rem; }
+.brt-audit__proofstrip .brt-proof__rating { font-size: .78rem; }
+
+/* --- standalone CTA bands, closing the dead zones --------------------- */
+.brt-audit__ctaband {
+  padding-top: clamp(1.5rem, 4vw, 2.25rem);
+  margin-top: clamp(1.5rem, 4vw, 2.25rem);
+  border-top: 1px solid var(--brt-border);
+}
+
+/* --- reassurance under the submit button ------------------------------ */
+.brt-form__reassure {
+  margin: .85rem 0 0;
+  font-size: .875rem;
+  color: var(--brt-slate);
+  max-width: 46ch;
+}
